@@ -35,6 +35,7 @@ export type BlogPost = {
   category: string | null
   excerpt: string | null
   content: string | null
+  cover_url: string | null
   published: boolean
   published_at: string | null
   created_at: string

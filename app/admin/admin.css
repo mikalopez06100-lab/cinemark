@@ -52,19 +52,13 @@ body {
   color: var(--cream);
   display: block;
 }
-.admin-logo-title {
-  font-family: var(--serif);
-  font-size: 1.2rem;
-  font-weight: 400;
-  display: block;
-}
 .admin-logo-sub {
   font-size: 0.68rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
   display: block;
-  margin-top: 0.2rem;
+  margin-top: 0.15rem;
 }
 
 .admin-nav { flex: 1; }

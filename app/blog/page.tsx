@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import type { BlogPost } from '@/lib/supabase'
@@ -34,13 +35,23 @@ export default async function BlogPage() {
           {posts.map((post) => (
             <Link key={post.id} href={`/blog/${post.slug}`} className="blog-card">
               <div className="blog-card-img">
-                <div className="blog-card-img-icon">
-                  <svg viewBox="0 0 48 48" fill="none">
-                    <rect x="6" y="10" width="36" height="28" rx="2" stroke="white" strokeWidth="1.5"/>
-                    <path d="M6 18h36" stroke="white" strokeWidth="1.5"/>
-                    <circle cx="24" cy="30" r="4" stroke="white" strokeWidth="1.5"/>
-                  </svg>
-                </div>
+                {post.cover_url ? (
+                  <Image
+                    src={post.cover_url}
+                    alt=""
+                    fill
+                    sizes="(max-width: 900px) 100vw, 33vw"
+                    className="blog-card-img-photo"
+                  />
+                ) : (
+                  <div className="blog-card-img-icon">
+                    <svg viewBox="0 0 48 48" fill="none">
+                      <rect x="6" y="10" width="36" height="28" rx="2" stroke="white" strokeWidth="1.5"/>
+                      <path d="M6 18h36" stroke="white" strokeWidth="1.5"/>
+                      <circle cx="24" cy="30" r="4" stroke="white" strokeWidth="1.5"/>
+                    </svg>
+                  </div>
+                )}
               </div>
               <div className="blog-card-body">
                 {post.category && <span className="blog-card-cat">{post.category}</span>}

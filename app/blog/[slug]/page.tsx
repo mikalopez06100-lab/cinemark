@@ -66,9 +66,18 @@ export default async function BlogPostPage({ params }: Props) {
       )}
 
       {post.content && (
-        <div style={{ color: 'var(--muted)', lineHeight: 1.9, fontSize: '1rem' }}>
-          {post.content.split('\n').map((para, i) =>
-            para.trim() ? <p key={i} style={{ marginBottom: '1.5rem' }}>{para}</p> : null
+        <div className="blog-post-body">
+          {post.content.trimStart().startsWith('<') ? (
+            <div
+              className="blog-article-html"
+              dangerouslySetInnerHTML={{ __html: post.content }}
+            />
+          ) : (
+            <div style={{ color: 'var(--muted)', lineHeight: 1.9, fontSize: '1rem' }}>
+              {post.content.split('\n').map((para, i) =>
+                para.trim() ? <p key={i} style={{ marginBottom: '1.5rem' }}>{para}</p> : null
+              )}
+            </div>
           )}
         </div>
       )}

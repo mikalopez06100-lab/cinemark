@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import SiteLogo from '@/components/SiteLogo'
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: '◈' },
@@ -26,7 +27,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     <div className="admin-shell">
       <aside className="admin-sidebar">
         <Link href="/admin" className="admin-logo">
-          <span className="admin-logo-title">Cinémark</span>
+          <SiteLogo variant="admin" />
           <span className="admin-logo-sub">Administration</span>
         </Link>
 

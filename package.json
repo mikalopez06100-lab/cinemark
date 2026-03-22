@@ -6,21 +6,27 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "storage:migrate": "node scripts/apply-supabase-sql.mjs supabase/migrations/002_storage_site_assets.sql",
+    "storage:upload-logo": "node scripts/upload-site-logo.mjs",
+    "storage:publish-logo": "node scripts/apply-supabase-sql.mjs supabase/migrations/003_storage_logo_anon_upload_once.sql && node scripts/upload-site-logo.mjs && node scripts/apply-supabase-sql.mjs supabase/migrations/004_storage_logo_lock_upload.sql",
+    "article:extract-images": "node scripts/extract-article-images.mjs",
+    "article:publish-monpanier": "node scripts/publish-monpanier-article.mjs"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.5.1",
+    "@supabase/supabase-js": "^2.45.0",
     "next": "14.2.5",
     "react": "^18",
-    "react-dom": "^18",
-    "@supabase/supabase-js": "^2.45.0",
-    "@supabase/ssr": "^0.5.1"
+    "react-dom": "^18"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
-    "eslint-config-next": "14.2.5"
+    "eslint-config-next": "14.2.5",
+    "pg": "^8.20.0",
+    "typescript": "^5"
   }
 }
