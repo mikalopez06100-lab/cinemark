@@ -45,9 +45,10 @@ nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.4rem 4rem;
-  background: linear-gradient(to bottom, rgba(10,10,10,0.96) 0%, transparent 100%);
-  backdrop-filter: blur(4px);
+  gap: 1rem;
+  padding: 1rem 4rem;
+  background: linear-gradient(to bottom, rgba(10,10,10,0.98) 0%, rgba(10,10,10,0.88) 45%, transparent 100%);
+  backdrop-filter: blur(8px);
   border-bottom: 1px solid transparent;
   transition: border-color 0.4s;
 }
@@ -59,6 +60,15 @@ nav.scrolled { border-color: var(--border); }
   gap: 0.75rem;
   text-decoration: none;
   color: var(--cream);
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: min(46vw, 400px);
+  position: relative;
+  z-index: 1;
+}
+.nav-logo img {
+  max-width: 100%;
+  height: auto;
 }
 .nav-logo-text {
   font-family: var(--serif);
@@ -69,10 +79,22 @@ nav.scrolled { border-color: var(--border); }
 
 .nav-links {
   display: flex;
-  gap: 2.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(1rem, 2vw, 2.5rem);
   list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  position: relative;
+  z-index: 2;
+}
+@media (min-width: 1200px) {
+  .nav-links { flex-wrap: nowrap; }
 }
 .nav-links a {
+  white-space: nowrap;
   font-size: 0.78rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -83,6 +105,9 @@ nav.scrolled { border-color: var(--border); }
 .nav-links a:hover { color: var(--cream); }
 
 .nav-cta {
+  flex: 0 0 auto;
+  position: relative;
+  z-index: 2;
   font-size: 0.72rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -107,15 +132,9 @@ nav.scrolled { border-color: var(--border); }
 .hero-bg {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% 50%, rgba(184,151,62,0.05) 0%, transparent 70%),
-    linear-gradient(to bottom, var(--black) 0%, var(--black) 100%);
-}
-.hero-bg::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, transparent 60%, var(--black) 100%);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .film-strip {
@@ -141,7 +160,8 @@ nav.scrolled { border-color: var(--border); }
   position: relative;
   z-index: 2;
   max-width: 56rem;
-  padding-top: 6rem;
+  /* Décale le bloc sous la barre fixe (logo large + padding nav) */
+  padding-top: clamp(8.5rem, 22vh, 14rem);
 }
 .hero-label {
   font-size: 0.7rem;
@@ -683,9 +703,38 @@ footer {
   object-fit: contain;
   opacity: 0.92;
 }
-.site-logo--nav { max-height: 40px; }
-.site-logo--footer { max-height: 36px; opacity: 0.85; }
-.site-logo--admin { max-height: 42px; margin-bottom: 0.35rem; }
+/* Logo : tailles max lisibles ; le nav / footer gardent object-fit contain */
+.site-logo--nav {
+  max-height: 120px;
+  width: auto !important;
+  max-width: min(52vw, 420px);
+}
+.site-logo--footer {
+  max-height: 100px;
+  width: auto !important;
+  max-width: min(85vw, 380px);
+  opacity: 0.95;
+}
+.site-logo--admin {
+  max-height: 132px;
+  width: auto !important;
+  max-width: 100%;
+  margin-bottom: 0.35rem;
+  object-fit: contain;
+  object-position: left top;
+}
+@media (max-width: 1100px) {
+  .site-logo--nav { max-height: 96px; max-width: min(48vw, 340px); }
+}
+@media (max-width: 768px) {
+  .site-logo--nav { max-height: 76px; max-width: min(58vw, 280px); }
+  .site-logo--footer { max-height: 72px; max-width: 90vw; }
+}
+@media (max-width: 640px) {
+  .site-logo--nav { max-height: 64px; max-width: 70vw; }
+  .site-logo--footer { max-height: 58px; }
+  .site-logo--admin { max-height: 100px; }
+}
 .footer-copy {
   font-size: 0.72rem;
   color: var(--muted);
@@ -969,6 +1018,11 @@ footer {
   display: block;
   border-radius: 2px;
   border: 1px solid var(--border);
+}
+.blog-article-html .blog-article-image--square {
+  max-width: min(100%, 520px);
+  margin-left: auto;
+  margin-right: auto;
 }
 .blog-article-html figcaption {
   font-size: 0.72rem;

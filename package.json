@@ -11,7 +11,10 @@
     "storage:upload-logo": "node scripts/upload-site-logo.mjs",
     "storage:publish-logo": "node scripts/apply-supabase-sql.mjs supabase/migrations/003_storage_logo_anon_upload_once.sql && node scripts/upload-site-logo.mjs && node scripts/apply-supabase-sql.mjs supabase/migrations/004_storage_logo_lock_upload.sql",
     "article:extract-images": "node scripts/extract-article-images.mjs",
-    "article:publish-monpanier": "node scripts/publish-monpanier-article.mjs"
+    "article:publish-monpanier": "node scripts/publish-monpanier-article.mjs",
+    "article:extract-fsgt": "node scripts/extract-fsgt-images.mjs",
+    "article:publish-fsgt": "node scripts/publish-fsgt-article.mjs",
+    "storage:upload-hero-bg": "node scripts/upload-hero-background.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.1",

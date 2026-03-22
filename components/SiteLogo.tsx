@@ -6,10 +6,11 @@ import { getSiteLogoRemoteUrl } from '@/lib/site-logo'
 
 const FALLBACK_SRC = '/images/cinemark-logo.png'
 
+/** Dimensions = ratio intrinsèque (~3,33:l) ; le CSS fixe la taille d’affichage réelle. */
 const SIZES = {
-  nav: { width: 132, height: 40, className: 'site-logo site-logo--nav' as const },
-  footer: { width: 120, height: 36, className: 'site-logo site-logo--footer' as const },
-  admin: { width: 140, height: 42, className: 'site-logo site-logo--admin' as const },
+  nav: { width: 480, height: 144, className: 'site-logo site-logo--nav' as const },
+  footer: { width: 420, height: 126, className: 'site-logo site-logo--footer' as const },
+  admin: { width: 480, height: 144, className: 'site-logo site-logo--admin' as const },
 }
 
 type Variant = keyof typeof SIZES

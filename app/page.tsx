@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import RevealWrapper from '@/components/RevealWrapper'
 import HomeClient from '@/components/HomeClient'
+import { getHeroBackgroundImageUrl } from '@/lib/hero-background'
 import { supabase } from '@/lib/supabase'
 import type { Film, BlogPost } from '@/lib/supabase'
 
@@ -19,12 +20,23 @@ export const revalidate = 60
 
 export default async function HomePage() {
   const { films, posts } = await getHomeData()
+  const heroBgUrl = getHeroBackgroundImageUrl()
 
   return (
     <RevealWrapper>
       {/* HERO */}
       <section id="hero">
-        <div className="hero-bg" />
+        <div
+          className="hero-bg"
+          style={{
+            backgroundImage: [
+              'linear-gradient(180deg, transparent 48%, rgba(10,10,10,0.94) 100%)',
+              'radial-gradient(ellipse 85% 58% at 50% 40%, rgba(184,151,62,0.09) 0%, transparent 68%)',
+              'linear-gradient(to bottom, rgba(10,10,10,0.9) 0%, rgba(10,10,10,0.38) 44%, rgba(10,10,10,0.78) 100%)',
+              `url(${heroBgUrl})`,
+            ].join(', '),
+          }}
+        />
         <div className="film-strip">
           {Array.from({ length: 30 }).map((_, i) => (
             <div key={i} className="film-hole" />
