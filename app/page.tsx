@@ -1,7 +1,10 @@
+import Image from 'next/image'
 import Link from 'next/link'
+import PartnersGrid from '@/components/PartnersGrid'
 import RevealWrapper from '@/components/RevealWrapper'
 import HomeClient from '@/components/HomeClient'
 import { getHeroBackgroundImageUrl } from '@/lib/hero-background'
+import { partnersForHomePreview } from '@/lib/partners-showcase'
 import { supabase } from '@/lib/supabase'
 import type { Film, BlogPost } from '@/lib/supabase'
 
@@ -93,17 +96,14 @@ export default async function HomePage() {
       <section id="concept">
         <div className="concept-visual reveal">
           <div className="concept-stripe" />
-          <div className="clapperboard-icon">
-            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="10" y="35" width="100" height="75" rx="4" fill="white" fillOpacity="0.6"/>
-              <rect x="10" y="35" width="100" height="22" rx="4" fill="white"/>
-              <line x1="30" y1="35" x2="22" y2="14" stroke="white" strokeWidth="3"/>
-              <line x1="50" y1="35" x2="42" y2="14" stroke="white" strokeWidth="3"/>
-              <line x1="70" y1="35" x2="62" y2="14" stroke="white" strokeWidth="3"/>
-              <line x1="90" y1="35" x2="82" y2="14" stroke="white" strokeWidth="3"/>
-              <circle cx="60" cy="80" r="14" fill="none" stroke="white" strokeWidth="2.5"/>
-              <circle cx="60" cy="80" r="5" fill="white"/>
-            </svg>
+          <div className="concept-visual-photo">
+            <Image
+              src="/images/concept-placement-tournage.png"
+              alt="Plateau de tournage : clap, Bière du Comté et opérateur caméra — placement produit Cinémark"
+              fill
+              sizes="(max-width: 900px) 100vw, 45vw"
+              className="concept-visual-img"
+            />
           </div>
           <p className="concept-quote">
             Chaque film est une vitrine. Chaque plan, une opportunité.
@@ -170,27 +170,21 @@ export default async function HomePage() {
             Des brasseries artisanales aux grandes institutions sportives, Cinémark accompagne des marques qui ont en commun d&apos;être ancrées dans leur territoire.
           </p>
         </div>
-        <div className="brands-grid reveal">
-          {[
-            { name: 'OGC Nice', cat: 'Sport · Institution', featured: true },
-            { name: 'Riviera Kombucha', cat: 'Boisson · Artisanal', featured: false },
-            { name: 'Riviera Beer', cat: 'Brasserie · Artisanal', featured: false },
-            { name: 'Bacho Brewery', cat: 'Brasserie · Tourettes-sur-Loup', featured: false },
-            { name: 'Soleia Nice', cat: 'Limoncello · Local', featured: false },
-            { name: 'Limonade du Comte', cat: 'Boisson · Région SUD', featured: false },
-            { name: 'WeMood Shop', cat: 'Art & Décoration', featured: false },
-            { name: 'Champagne C. Cherki', cat: 'Champagne · Prestige', featured: false },
-          ].map((brand) => (
-            <div key={brand.name} className={`brand-tile${brand.featured ? ' featured' : ''}`}>
-              <svg className="brand-icon" viewBox="0 0 40 40" fill="none">
-                <circle cx="20" cy="20" r="14" stroke={brand.featured ? '#b8973e' : 'white'} strokeWidth="1.5"/>
-                <circle cx="20" cy="20" r="5" stroke={brand.featured ? '#b8973e' : 'white'} strokeWidth="1.5"/>
-              </svg>
-              <span className="brand-name">{brand.name}</span>
-              <span className="brand-cat">{brand.cat}</span>
-            </div>
-          ))}
+        <div className="reveal">
+          <PartnersGrid partners={partnersForHomePreview(8)} />
         </div>
+        <p style={{ textAlign: 'center', marginTop: '2.5rem' }}>
+          <Link
+            href="/partenaires"
+            className="btn-ghost"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+          >
+            Voir tous les partenaires
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </Link>
+        </p>
       </section>
 
       {/* TERRITORY */}
@@ -321,16 +315,30 @@ export default async function HomePage() {
             { id: '1', slug: '#', category: 'Coulisses', title: 'Soleil d\'Azur : 3 semaines de tournage à Menton', excerpt: 'Retour sur le tournage du dernier long métrage accompagné par Cinémark, entre soleils de façade et nuits de production.', published_at: '2025-05-15' },
             { id: '2', slug: '#', category: 'Tendances', title: 'Pourquoi le placement produit local explose en 2025', excerpt: 'Les marques régionales découvrent enfin ce que les multinationales savent depuis des années : le cinéma reste le média le plus mémorable.', published_at: '2025-05-08' },
             { id: '3', slug: '#', category: 'Partenariat', title: 'OGC Nice & Cinémark : un an de collaboration', excerpt: 'Retour sur 12 mois de présence de l\'OGC Nice dans les productions Cinémark, et les résultats mesurés en termes de notoriété.', published_at: '2025-05-02' },
-          ] as any[]).map((post) => (
-            <a key={post.id} href={post.slug === '#' ? '#' : `/blog/${post.slug}`} className="blog-card">
+          ] as BlogPost[]).map((post) => (
+            <Link
+              key={post.id}
+              href={post.slug === '#' ? '/blog' : `/blog/${post.slug}`}
+              className="blog-card"
+            >
               <div className="blog-card-img">
-                <div className="blog-card-img-icon">
-                  <svg viewBox="0 0 48 48" fill="none">
-                    <rect x="6" y="10" width="36" height="28" rx="2" stroke="white" strokeWidth="1.5"/>
-                    <path d="M6 18h36" stroke="white" strokeWidth="1.5"/>
-                    <circle cx="24" cy="30" r="4" stroke="white" strokeWidth="1.5"/>
-                  </svg>
-                </div>
+                {post.cover_url ? (
+                  <Image
+                    src={post.cover_url}
+                    alt=""
+                    fill
+                    sizes="(max-width: 900px) 100vw, 33vw"
+                    className="blog-card-img-photo"
+                  />
+                ) : (
+                  <div className="blog-card-img-icon">
+                    <svg viewBox="0 0 48 48" fill="none">
+                      <rect x="6" y="10" width="36" height="28" rx="2" stroke="white" strokeWidth="1.5"/>
+                      <path d="M6 18h36" stroke="white" strokeWidth="1.5"/>
+                      <circle cx="24" cy="30" r="4" stroke="white" strokeWidth="1.5"/>
+                    </svg>
+                  </div>
+                )}
               </div>
               <div className="blog-card-body">
                 <span className="blog-card-cat">{post.category}</span>
@@ -343,7 +351,7 @@ export default async function HomePage() {
                   <span className="blog-card-read">Lire →</span>
                 </div>
               </div>
-            </a>
+            </Link>
           ))}
         </div>
 

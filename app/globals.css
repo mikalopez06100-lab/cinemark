@@ -343,17 +343,24 @@ section { padding: 8rem 4rem; }
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, transparent 60%, rgba(184,151,62,0.08) 100%);
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(to top, rgba(10, 10, 10, 0.92) 0%, rgba(10, 10, 10, 0.35) 45%, transparent 72%),
+    linear-gradient(135deg, transparent 55%, rgba(184, 151, 62, 0.1) 100%);
 }
-.clapperboard-icon {
+.concept-visual-photo {
   position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0.12;
+  top: 0.7rem;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
 }
-.clapperboard-icon svg { width: 120px; height: 120px; }
+.concept-visual-img {
+  object-fit: cover;
+  object-position: center 30%;
+}
 .concept-quote {
   position: absolute;
   bottom: 2rem;
@@ -366,6 +373,7 @@ section { padding: 8rem 4rem; }
   line-height: 1.4;
   color: var(--cream);
   z-index: 2;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.75);
 }
 .concept-quote cite {
   display: block;
@@ -380,6 +388,7 @@ section { padding: 8rem 4rem; }
 .concept-stripe {
   position: absolute;
   top: 0; left: 0; right: 0;
+  z-index: 3;
   height: 0.7rem;
   background: repeating-linear-gradient(90deg, var(--gold) 0px, var(--gold) 20px, var(--black) 20px, var(--black) 40px);
 }
@@ -429,6 +438,12 @@ section { padding: 8rem 4rem; }
   background: var(--charcoal);
   text-align: center;
 }
+#partenaires {
+  background: var(--charcoal);
+  text-align: center;
+  padding-left: 4rem;
+  padding-right: 4rem;
+}
 .clients-intro { max-width: 44rem; margin: 0 auto 4rem; }
 .clients-intro .section-label { justify-content: center; }
 .clients-intro .section-label::before { display: none; }
@@ -453,10 +468,20 @@ section { padding: 8rem 4rem; }
   cursor: default;
 }
 .brand-tile:hover { background: var(--surface); }
-.brand-icon {
-  width: 40px;
-  height: 40px;
-  opacity: 0.35;
+.brand-logo-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 150px;
+  height: 58px;
+  flex-shrink: 0;
+}
+.brand-logo-img {
+  object-fit: contain;
+  object-position: center;
+  opacity: 0.92;
+}
+.brand-tile:hover .brand-logo-img {
+  opacity: 1;
 }
 .brand-name {
   font-size: 0.78rem;
@@ -471,7 +496,9 @@ section { padding: 8rem 4rem; }
   color: var(--gold);
   opacity: 0.7;
 }
-.brand-tile.featured .brand-icon { opacity: 0.65; }
+.brand-tile.featured .brand-logo-img {
+  opacity: 1;
+}
 .brand-tile.featured .brand-name { color: var(--cream); }
 
 /* TERRITORY */
