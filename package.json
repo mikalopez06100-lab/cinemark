@@ -14,6 +14,8 @@
     "article:publish-monpanier": "node scripts/publish-monpanier-article.mjs",
     "article:extract-fsgt": "node scripts/extract-fsgt-images.mjs",
     "article:publish-fsgt": "node scripts/publish-fsgt-article.mjs",
+    "article:extract-lindusud": "node scripts/extract-lindusud-images.mjs",
+    "article:publish-lindusud": "node scripts/publish-lindusud-article.mjs",
     "storage:upload-hero-bg": "node scripts/upload-hero-background.mjs",
     "partners:sync-logos": "node scripts/sync-partners-logos.mjs"
   },
