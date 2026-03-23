@@ -14,7 +14,8 @@
     "article:publish-monpanier": "node scripts/publish-monpanier-article.mjs",
     "article:extract-fsgt": "node scripts/extract-fsgt-images.mjs",
     "article:publish-fsgt": "node scripts/publish-fsgt-article.mjs",
-    "storage:upload-hero-bg": "node scripts/upload-hero-background.mjs"
+    "storage:upload-hero-bg": "node scripts/upload-hero-background.mjs",
+    "partners:sync-logos": "node scripts/sync-partners-logos.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.1",

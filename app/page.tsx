@@ -4,26 +4,32 @@ import PartnersGrid from '@/components/PartnersGrid'
 import RevealWrapper from '@/components/RevealWrapper'
 import HomeClient from '@/components/HomeClient'
 import { getHeroBackgroundImageUrl } from '@/lib/hero-background'
-import { partnersForHomePreview } from '@/lib/partners-showcase'
 import { supabase } from '@/lib/supabase'
-import type { Film, BlogPost } from '@/lib/supabase'
+import type { Film, BlogPost, Partner } from '@/lib/supabase'
 
 async function getHomeData() {
-  const [filmsRes, postsRes] = await Promise.all([
+  const [filmsRes, postsRes, partnersRes] = await Promise.all([
     supabase.from('films').select('*').order('created_at', { ascending: false }).limit(3),
     supabase.from('blog_posts').select('*').eq('published', true).order('published_at', { ascending: false }).limit(3),
+    supabase
+      .from('partners')
+      .select('id, name, category, logo_url')
+      .eq('active', true)
+      .order('name'),
   ])
   return {
     films: (filmsRes.data ?? []) as Film[],
     posts: (postsRes.data ?? []) as BlogPost[],
+    partners: (partnersRes.data ?? []) as Pick<Partner, 'id' | 'name' | 'category' | 'logo_url'>[],
   }
 }
 
 export const revalidate = 60
 
 export default async function HomePage() {
-  const { films, posts } = await getHomeData()
+  const { films, posts, partners } = await getHomeData()
   const heroBgUrl = getHeroBackgroundImageUrl()
+  const previewPartners = partners.slice(0, 8).map((p, i) => ({ ...p, featured: i < 3 }))
 
   return (
     <RevealWrapper>
@@ -171,7 +177,7 @@ export default async function HomePage() {
           </p>
         </div>
         <div className="reveal">
-          <PartnersGrid partners={partnersForHomePreview(8)} />
+          <PartnersGrid partners={previewPartners} />
         </div>
         <p style={{ textAlign: 'center', marginTop: '2.5rem' }}>
           <Link
@@ -190,11 +196,14 @@ export default async function HomePage() {
       {/* TERRITORY */}
       <section id="territory">
         <div className="territory-map reveal">
-          <div className="map-dots" />
-          <div className="map-label">
-            <span className="big">Côte d&apos;Azur</span>
-            <span className="small">Région SUD · PACA</span>
-          </div>
+          <Image
+            src="/images/territoire-paca-carte.png"
+            alt="Carte de la région PACA avec villes d'intervention Cinémark"
+            fill
+            sizes="(max-width: 900px) 100vw, 50vw"
+            className="territory-map-img"
+            priority={false}
+          />
         </div>
         <div className="reveal reveal-delay-1">
           <p className="section-label">Notre territoire</p>

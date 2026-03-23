@@ -7,11 +7,11 @@ import type { BlogPost } from '@/lib/supabase'
 
 type FormState = {
   title: string; slug: string; category: string;
-  excerpt: string; content: string; published: boolean
+  excerpt: string; content: string; cover_url: string; published: boolean
 }
 
 const emptyForm: FormState = {
-  title: '', slug: '', category: '', excerpt: '', content: '', published: false
+  title: '', slug: '', category: '', excerpt: '', content: '', cover_url: '', published: false
 }
 
 function slugify(str: string) {
@@ -26,6 +26,7 @@ export default function AdminBlogClient({ posts }: { posts: BlogPost[] }) {
   const [editing, setEditing] = useState<BlogPost | null>(null)
   const [form, setForm] = useState<FormState>(emptyForm)
   const [saving, setSaving] = useState(false)
+  const [uploadingCover, setUploadingCover] = useState(false)
   const [error, setError] = useState('')
 
   const openCreate = () => {
@@ -41,6 +42,7 @@ export default function AdminBlogClient({ posts }: { posts: BlogPost[] }) {
       category: post.category ?? '',
       excerpt: post.excerpt ?? '',
       content: post.content ?? '',
+      cover_url: post.cover_url ?? '',
       published: post.published,
     })
     setEditing(post)
@@ -66,6 +68,7 @@ export default function AdminBlogClient({ posts }: { posts: BlogPost[] }) {
       category: form.category || null,
       excerpt: form.excerpt || null,
       content: form.content || null,
+      cover_url: form.cover_url || null,
       published: form.published,
       published_at: form.published ? new Date().toISOString() : null,
     }
@@ -82,6 +85,28 @@ export default function AdminBlogClient({ posts }: { posts: BlogPost[] }) {
     if (!confirm('Supprimer cet article ?')) return
     await supabase.from('blog_posts').delete().eq('id', id)
     router.refresh()
+  }
+
+  const uploadCover = async (file: File) => {
+    setError('')
+    setUploadingCover(true)
+    const ext = file.name.split('.').pop()?.toLowerCase() || 'png'
+    const safeSlug = form.slug || slugify(form.title) || 'article'
+    const path = `blog-covers/${Date.now()}-${safeSlug}.${ext}`
+
+    const { error: uploadError } = await supabase.storage
+      .from('site-assets')
+      .upload(path, file, { upsert: true, contentType: file.type || 'image/png' })
+
+    if (uploadError) {
+      setError(`Upload de la couverture impossible: ${uploadError.message}`)
+      setUploadingCover(false)
+      return
+    }
+
+    const { data } = supabase.storage.from('site-assets').getPublicUrl(path)
+    setForm((prev) => ({ ...prev, cover_url: data.publicUrl }))
+    setUploadingCover(false)
   }
 
   return (
@@ -153,6 +178,32 @@ export default function AdminBlogClient({ posts }: { posts: BlogPost[] }) {
             <div className="admin-form-group">
               <label>Extrait</label>
               <textarea name="excerpt" value={form.excerpt} onChange={handleChange} placeholder="Résumé court de l'article…" style={{ minHeight: '70px' }} />
+            </div>
+            <div className="admin-form-group">
+              <label>Image de couverture (URL)</label>
+              <input name="cover_url" type="url" value={form.cover_url} onChange={handleChange} placeholder="https://..." />
+              <div style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                <label className="btn-admin-ghost" style={{ cursor: uploadingCover ? 'not-allowed' : 'pointer', opacity: uploadingCover ? 0.6 : 1 }}>
+                  {uploadingCover ? 'Upload…' : 'Uploader une image'}
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    style={{ display: 'none' }}
+                    disabled={uploadingCover}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) uploadCover(file)
+                    }}
+                  />
+                </label>
+                {form.cover_url && (
+                  <img
+                    src={form.cover_url}
+                    alt="Aperçu couverture article"
+                    style={{ width: '96px', height: '56px', objectFit: 'cover', border: '1px solid var(--border)', borderRadius: '4px' }}
+                  />
+                )}
+              </div>
             </div>
             <div className="admin-form-group">
               <label>Contenu</label>

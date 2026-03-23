@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import PartnersGrid from '@/components/PartnersGrid'
-import { PARTNER_SHOWCASE } from '@/lib/partners-showcase'
+import { supabase } from '@/lib/supabase'
+import type { Partner } from '@/lib/supabase'
 
 export const metadata: Metadata = {
   title: 'Partenaires — Cinémark',
@@ -9,7 +10,19 @@ export const metadata: Metadata = {
     'Marques, institutions et artisans de la Côte d\'Azur qui ont collaboré avec Cinémark sur des placements produits et des productions locales.',
 }
 
-export default function PartenairesPage() {
+export const dynamic = 'force-dynamic'
+
+export default async function PartenairesPage() {
+  const { data } = await supabase
+    .from('partners')
+    .select('id, name, category, logo_url')
+    .eq('active', true)
+    .order('name')
+  const partners = ((data ?? []) as Pick<Partner, 'id' | 'name' | 'category' | 'logo_url'>[]).map((p, i) => ({
+    ...p,
+    featured: i < 4,
+  }))
+
   return (
     <section id="partenaires" style={{ paddingTop: '10rem', paddingBottom: '6rem' }}>
       <div className="clients-intro reveal" style={{ marginBottom: '3rem' }}>
@@ -25,7 +38,7 @@ export default function PartenairesPage() {
         </p>
       </div>
 
-      <PartnersGrid partners={PARTNER_SHOWCASE} />
+      <PartnersGrid partners={partners} />
 
       <p style={{ textAlign: 'center', marginTop: '3.5rem', color: 'var(--muted)', fontSize: '0.85rem' }}>
         Votre marque sur cette liste ?{' '}

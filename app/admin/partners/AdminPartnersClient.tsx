@@ -17,6 +17,7 @@ export default function AdminPartnersClient({ partners }: { partners: Partner[] 
   const [editing, setEditing] = useState<Partner | null>(null)
   const [form, setForm] = useState<FormState>(emptyForm)
   const [saving, setSaving] = useState(false)
+  const [uploadingLogo, setUploadingLogo] = useState(false)
   const [error, setError] = useState('')
 
   const openCreate = () => {
@@ -59,6 +60,33 @@ export default function AdminPartnersClient({ partners }: { partners: Partner[] 
     if (!confirm('Supprimer ce partenaire ?')) return
     await supabase.from('partners').delete().eq('id', id)
     router.refresh()
+  }
+
+  const uploadLogo = async (file: File) => {
+    setError('')
+    setUploadingLogo(true)
+    const ext = file.name.split('.').pop()?.toLowerCase() || 'png'
+    const safeName = form.name
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
+    const path = `partners/${Date.now()}-${safeName || 'partner'}.${ext}`
+
+    const { error: uploadError } = await supabase.storage
+      .from('site-assets')
+      .upload(path, file, { upsert: true, contentType: file.type || 'image/png' })
+
+    if (uploadError) {
+      setError(`Upload du logo impossible: ${uploadError.message}`)
+      setUploadingLogo(false)
+      return
+    }
+
+    const { data } = supabase.storage.from('site-assets').getPublicUrl(path)
+    setForm((prev) => ({ ...prev, logo_url: data.publicUrl }))
+    setUploadingLogo(false)
   }
 
   return (
@@ -128,6 +156,28 @@ export default function AdminPartnersClient({ partners }: { partners: Partner[] 
             <div className="admin-form-group">
               <label>URL du logo</label>
               <input name="logo_url" type="url" value={form.logo_url} onChange={handleChange} placeholder="https://..." />
+              <div style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                <label className="btn-admin-ghost" style={{ cursor: uploadingLogo ? 'not-allowed' : 'pointer', opacity: uploadingLogo ? 0.6 : 1 }}>
+                  {uploadingLogo ? 'Upload…' : 'Uploader un logo'}
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                    style={{ display: 'none' }}
+                    disabled={uploadingLogo}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) uploadLogo(file)
+                    }}
+                  />
+                </label>
+                {form.logo_url && (
+                  <img
+                    src={form.logo_url}
+                    alt="Aperçu logo partenaire"
+                    style={{ width: '64px', height: '64px', objectFit: 'contain', border: '1px solid var(--border)', borderRadius: '4px', background: 'var(--surface)', padding: '0.35rem' }}
+                  />
+                )}
+              </div>
             </div>
             <div className="admin-form-group">
               <label>Statut</label>

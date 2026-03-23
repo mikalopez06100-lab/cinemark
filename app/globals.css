@@ -475,6 +475,10 @@ section { padding: 8rem 4rem; }
   height: 58px;
   flex-shrink: 0;
 }
+.brand-logo-wrap--empty {
+  border: 1px dashed var(--border);
+  border-radius: 4px;
+}
 .brand-logo-img {
   object-fit: contain;
   object-position: center;
@@ -511,47 +515,15 @@ section { padding: 8rem 4rem; }
 }
 .territory-map {
   position: relative;
-  aspect-ratio: 1;
+  aspect-ratio: 1024 / 849;
   background: var(--charcoal);
   border: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
+  border-radius: 4px;
 }
-.territory-map::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center, rgba(184,151,62,0.06) 0%, transparent 70%);
-}
-.map-dots {
-  position: absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(circle, rgba(184,151,62,0.4) 1px, transparent 1px),
-    radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
-  background-size: 28px 28px, 14px 14px;
-  background-position: 0 0, 7px 7px;
-}
-.map-label {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-}
-.map-label .big {
-  font-family: var(--serif);
-  font-size: 3rem;
-  font-weight: 300;
-  font-style: italic;
-  color: var(--gold-lt);
-  display: block;
-}
-.map-label .small {
-  font-size: 0.72rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--muted);
+.territory-map-img {
+  object-fit: cover;
+  object-position: center;
 }
 .territory-list {
   list-style: none;
