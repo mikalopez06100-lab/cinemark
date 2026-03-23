@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import type { Film, Partner } from '@/lib/supabase'
 
@@ -28,11 +28,17 @@ export default function AdminFilmsClient({
   partners: Pick<Partner, 'id' | 'name'>[]
 }) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [modal, setModal] = useState<'create' | 'edit' | null>(null)
   const [editing, setEditing] = useState<Film | null>(null)
   const [form, setForm] = useState<FormState>(emptyForm)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    if (searchParams.get('new') === '1') openCreate()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
 
   const openCreate = () => {
     setForm(emptyForm)
