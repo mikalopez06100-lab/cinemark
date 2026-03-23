@@ -18,10 +18,7 @@ export default async function PartenairesPage() {
     .select('id, name, category, logo_url, website')
     .eq('active', true)
     .order('name')
-  const partners = ((data ?? []) as Pick<Partner, 'id' | 'name' | 'category' | 'logo_url' | 'website'>[]).map((p, i) => ({
-    ...p,
-    featured: i < 4,
-  }))
+  const partners = (data ?? []) as Pick<Partner, 'id' | 'name' | 'category' | 'logo_url' | 'website'>[]
 
   return (
     <section id="partenaires" style={{ paddingTop: '10rem', paddingBottom: '6rem' }}>

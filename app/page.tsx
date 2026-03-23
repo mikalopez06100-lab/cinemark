@@ -29,7 +29,7 @@ export const revalidate = 60
 export default async function HomePage() {
   const { films, posts, partners } = await getHomeData()
   const heroBgUrl = getHeroBackgroundImageUrl()
-  const previewPartners = partners.slice(0, 8).map((p, i) => ({ ...p, featured: i < 3 }))
+  const previewPartners = partners.slice(0, 8)
 
   return (
     <RevealWrapper>

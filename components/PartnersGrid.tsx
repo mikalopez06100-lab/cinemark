@@ -1,14 +1,32 @@
+'use client'
+
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
 import type { Partner } from '@/lib/supabase'
 
 export type PartnerGridItem = Pick<Partner, 'id' | 'name' | 'category' | 'logo_url' | 'website'> & {
   featured?: boolean
 }
 
+function shufflePartners(list: PartnerGridItem[]): PartnerGridItem[] {
+  const arr = [...list]
+  for (let i = arr.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[arr[i], arr[j]] = [arr[j], arr[i]]
+  }
+  return arr
+}
+
 export default function PartnersGrid({ partners }: { partners: PartnerGridItem[] }) {
+  const [shuffled, setShuffled] = useState<PartnerGridItem[]>(partners)
+
+  useEffect(() => {
+    setShuffled(shufflePartners(partners))
+  }, [partners])
+
   return (
     <div className="brands-grid">
-      {partners.map((brand) => (
+      {shuffled.map((brand) => (
         <div
           key={brand.id}
           className={`brand-tile${brand.featured ? ' featured' : ''}`}

@@ -480,6 +480,16 @@ section { padding: 8rem 4rem; }
   inset: 0;
   display: block;
   border-radius: 2px;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, background-color 0.2s ease;
+}
+.brand-logo-link:hover,
+.brand-logo-link:focus-visible {
+  box-shadow: 0 0 0 1px rgba(184, 151, 62, 0.9), 0 0 18px rgba(184, 151, 62, 0.28);
+  background-color: rgba(184, 151, 62, 0.06);
+}
+.brand-logo-link:focus-visible {
+  outline: none;
 }
 .brand-logo-wrap--empty {
   border: 1px dashed var(--border);
@@ -489,6 +499,13 @@ section { padding: 8rem 4rem; }
   object-fit: contain;
   object-position: center;
   opacity: 0.92;
+  transition: transform 0.22s ease, opacity 0.22s ease, filter 0.22s ease;
+}
+.brand-logo-link:hover .brand-logo-img,
+.brand-logo-link:focus-visible .brand-logo-img {
+  transform: scale(1.06);
+  opacity: 1;
+  filter: drop-shadow(0 4px 14px rgba(184, 151, 62, 0.35));
 }
 .brand-tile:hover .brand-logo-img {
   opacity: 1;
