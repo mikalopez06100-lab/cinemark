@@ -15,10 +15,10 @@ export const dynamic = 'force-dynamic'
 export default async function PartenairesPage() {
   const { data } = await supabase
     .from('partners')
-    .select('id, name, category, logo_url')
+    .select('id, name, category, logo_url, website')
     .eq('active', true)
     .order('name')
-  const partners = ((data ?? []) as Pick<Partner, 'id' | 'name' | 'category' | 'logo_url'>[]).map((p, i) => ({
+  const partners = ((data ?? []) as Pick<Partner, 'id' | 'name' | 'category' | 'logo_url' | 'website'>[]).map((p, i) => ({
     ...p,
     featured: i < 4,
   }))

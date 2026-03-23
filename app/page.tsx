@@ -13,14 +13,14 @@ async function getHomeData() {
     supabase.from('blog_posts').select('*').eq('published', true).order('published_at', { ascending: false }).limit(3),
     supabase
       .from('partners')
-      .select('id, name, category, logo_url')
+      .select('id, name, category, logo_url, website')
       .eq('active', true)
       .order('name'),
   ])
   return {
     films: (filmsRes.data ?? []) as Film[],
     posts: (postsRes.data ?? []) as BlogPost[],
-    partners: (partnersRes.data ?? []) as Pick<Partner, 'id' | 'name' | 'category' | 'logo_url'>[],
+    partners: (partnersRes.data ?? []) as Pick<Partner, 'id' | 'name' | 'category' | 'logo_url' | 'website'>[],
   }
 }
 

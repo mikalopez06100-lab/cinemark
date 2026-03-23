@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import type { Partner } from '@/lib/supabase'
 
-export type PartnerGridItem = Pick<Partner, 'id' | 'name' | 'category' | 'logo_url'> & {
+export type PartnerGridItem = Pick<Partner, 'id' | 'name' | 'category' | 'logo_url' | 'website'> & {
   featured?: boolean
 }
 
@@ -15,13 +15,31 @@ export default function PartnersGrid({ partners }: { partners: PartnerGridItem[]
         >
           {brand.logo_url ? (
             <div className="brand-logo-wrap">
-              <Image
-                src={brand.logo_url}
-                alt={`Logo ${brand.name}`}
-                fill
-                sizes="(max-width: 900px) 50vw, 25vw"
-                className="brand-logo-img"
-              />
+              {brand.website ? (
+                <a
+                  href={brand.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="brand-logo-link"
+                  aria-label={`Visiter le site de ${brand.name}`}
+                >
+                  <Image
+                    src={brand.logo_url}
+                    alt={`Logo ${brand.name}`}
+                    fill
+                    sizes="(max-width: 900px) 50vw, 25vw"
+                    className="brand-logo-img"
+                  />
+                </a>
+              ) : (
+                <Image
+                  src={brand.logo_url}
+                  alt={`Logo ${brand.name}`}
+                  fill
+                  sizes="(max-width: 900px) 50vw, 25vw"
+                  className="brand-logo-img"
+                />
+              )}
             </div>
           ) : (
             <div className="brand-logo-wrap brand-logo-wrap--empty" aria-hidden />

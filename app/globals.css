@@ -475,6 +475,12 @@ section { padding: 8rem 4rem; }
   height: 58px;
   flex-shrink: 0;
 }
+.brand-logo-link {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border-radius: 2px;
+}
 .brand-logo-wrap--empty {
   border: 1px dashed var(--border);
   border-radius: 4px;
