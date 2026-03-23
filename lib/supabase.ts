@@ -1,9 +1,23 @@
+import { createBrowserClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+let browserClient: ReturnType<typeof createBrowserClient> | null = null
+
+function createSupabaseClient() {
+  if (typeof window === 'undefined') {
+    // Server components in this codebase still import this module for read queries.
+    return createClient(supabaseUrl, supabaseAnonKey)
+  }
+  if (!browserClient) {
+    browserClient = createBrowserClient(supabaseUrl, supabaseAnonKey)
+  }
+  return browserClient
+}
+
+export const supabase = createSupabaseClient()
 
 // Types
 export type Partner = {
