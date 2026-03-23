@@ -17,16 +17,24 @@ function shufflePartners(list: PartnerGridItem[]): PartnerGridItem[] {
   return arr
 }
 
-export default function PartnersGrid({ partners }: { partners: PartnerGridItem[] }) {
+export default function PartnersGrid({
+  partners,
+  limit,
+}: {
+  partners: PartnerGridItem[]
+  limit?: number
+}) {
   const [shuffled, setShuffled] = useState<PartnerGridItem[]>(partners)
 
   useEffect(() => {
     setShuffled(shufflePartners(partners))
   }, [partners])
 
+  const displayed = typeof limit === 'number' ? shuffled.slice(0, limit) : shuffled
+
   return (
     <div className="brands-grid">
-      {shuffled.map((brand) => (
+      {displayed.map((brand) => (
         <div
           key={brand.id}
           className={`brand-tile${brand.featured ? ' featured' : ''}`}

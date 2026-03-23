@@ -29,7 +29,6 @@ export const revalidate = 60
 export default async function HomePage() {
   const { films, posts, partners } = await getHomeData()
   const heroBgUrl = getHeroBackgroundImageUrl()
-  const previewPartners = partners.slice(0, 8)
 
   return (
     <RevealWrapper>
@@ -177,7 +176,7 @@ export default async function HomePage() {
           </p>
         </div>
         <div className="reveal">
-          <PartnersGrid partners={previewPartners} />
+          <PartnersGrid partners={partners} limit={8} />
         </div>
         <p style={{ textAlign: 'center', marginTop: '2.5rem' }}>
           <Link
