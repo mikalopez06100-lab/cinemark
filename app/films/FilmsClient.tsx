@@ -1,5 +1,7 @@
 'use client'
 
+import Image from 'next/image'
+import Link from 'next/link'
 import { useState } from 'react'
 import type { Film } from '@/lib/supabase'
 
@@ -38,7 +40,26 @@ export default function FilmsClient({ films }: { films: Film[] }) {
       ) : (
         <div className="films-grid">
           {visible.map((film) => (
-            <div key={film.id} className="film-card">
+            <Link key={film.id} href={`/films/${film.slug}`} className="film-card">
+              <div className="film-card-img">
+                {film.poster_url ? (
+                  <Image
+                    src={film.poster_url}
+                    alt={`Affiche ${film.title}`}
+                    fill
+                    sizes="(max-width: 900px) 100vw, 33vw"
+                    className="film-card-img-photo"
+                  />
+                ) : (
+                  <div className="film-card-img-icon" aria-hidden>
+                    <svg viewBox="0 0 48 48" fill="none">
+                      <rect x="6" y="10" width="36" height="28" rx="2" stroke="white" strokeWidth="1.5"/>
+                      <path d="M6 18h36" stroke="white" strokeWidth="1.5"/>
+                      <circle cx="24" cy="30" r="4" stroke="white" strokeWidth="1.5"/>
+                    </svg>
+                  </div>
+                )}
+              </div>
               <div className={`film-card-status status-${film.status}`}>
                 <span className={`status-dot ${film.status}`} />
                 {statusLabel[film.status]}
@@ -46,12 +67,15 @@ export default function FilmsClient({ films }: { films: Film[] }) {
               </div>
               <div className="film-card-title">{film.title}</div>
               <div className="film-card-year">
-                {film.year}{film.format ? ` · ${film.format}` : ''}
+                {(film.production_date
+                  ? new Date(film.production_date).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
+                  : film.year) ?? '—'}
+                {film.format ? ` · ${film.format}` : ''}
               </div>
               {film.description && (
                 <p className="film-card-desc">{film.description}</p>
               )}
-            </div>
+            </Link>
           ))}
         </div>
       )}

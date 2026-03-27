@@ -7,7 +7,11 @@ export const dynamic = 'force-dynamic'
 
 export default async function AdminFilmsPage() {
   const [filmsRes, partnersRes] = await Promise.all([
-    supabase.from('films').select('*').order('created_at', { ascending: false }),
+    supabase
+      .from('films')
+      .select('*')
+      .order('production_date', { ascending: false, nullsFirst: false })
+      .order('created_at', { ascending: false }),
     supabase.from('partners').select('id, name').eq('active', true).order('name'),
   ])
 

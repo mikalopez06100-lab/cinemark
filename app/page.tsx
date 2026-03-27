@@ -9,7 +9,12 @@ import type { Film, BlogPost, Partner } from '@/lib/supabase'
 
 async function getHomeData() {
   const [filmsRes, postsRes, partnersRes] = await Promise.all([
-    supabase.from('films').select('*').order('created_at', { ascending: false }).limit(3),
+    supabase
+      .from('films')
+      .select('*')
+      .order('production_date', { ascending: false, nullsFirst: false })
+      .order('created_at', { ascending: false })
+      .limit(3),
     supabase.from('blog_posts').select('*').eq('published', true).order('published_at', { ascending: false }).limit(3),
     supabase
       .from('partners')
@@ -27,7 +32,7 @@ async function getHomeData() {
 export const revalidate = 60
 
 export default async function HomePage() {
-  const { films, posts, partners } = await getHomeData()
+  const { films, posts, partners } = getHomeDataSorted(await getHomeData())
   const heroBgUrl = getHeroBackgroundImageUrl()
 
   return (
@@ -265,7 +270,26 @@ export default async function HomePage() {
         {films.length > 0 ? (
           <div className="films-grid reveal">
             {films.map((film) => (
-              <div key={film.id} className="film-card" data-status={film.status}>
+              <Link key={film.id} href={`/films/${film.slug}`} className="film-card" data-status={film.status}>
+                <div className="film-card-img">
+                  {film.poster_url ? (
+                    <Image
+                      src={film.poster_url}
+                      alt={`Affiche ${film.title}`}
+                      fill
+                      sizes="(max-width: 900px) 100vw, 33vw"
+                      className="film-card-img-photo"
+                    />
+                  ) : (
+                    <div className="film-card-img-icon" aria-hidden>
+                      <svg viewBox="0 0 48 48" fill="none">
+                        <rect x="6" y="10" width="36" height="28" rx="2" stroke="white" strokeWidth="1.5"/>
+                        <path d="M6 18h36" stroke="white" strokeWidth="1.5"/>
+                        <circle cx="24" cy="30" r="4" stroke="white" strokeWidth="1.5"/>
+                      </svg>
+                    </div>
+                  )}
+                </div>
                 <div className={`film-card-status status-${film.status}`}>
                   <span className={`status-dot ${film.status}`} />
                   {film.status === 'ongoing' && 'En cours de tournage'}
@@ -273,9 +297,14 @@ export default async function HomePage() {
                   {film.status === 'done' && 'Réalisé'}
                 </div>
                 <div className="film-card-title">{film.title}</div>
-                <div className="film-card-year">{film.year}{film.format ? ` · ${film.format}` : ''}</div>
+                <div className="film-card-year">
+                  {(film.production_date
+                    ? new Date(film.production_date).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
+                    : film.year) ?? '—'}
+                  {film.format ? ` · ${film.format}` : ''}
+                </div>
                 {film.description && <p className="film-card-desc">{film.description}</p>}
-              </div>
+              </Link>
             ))}
           </div>
         ) : (
@@ -374,4 +403,18 @@ export default async function HomePage() {
       </section>
     </RevealWrapper>
   )
+}
+
+function getHomeDataSorted(data: {
+  films: Film[]
+  posts: BlogPost[]
+  partners: Pick<Partner, 'id' | 'name' | 'category' | 'logo_url' | 'website'>[]
+}) {
+  const films = [...data.films].sort((a, b) => {
+    const da = a.production_date ? new Date(a.production_date).getTime() : 0
+    const db = b.production_date ? new Date(b.production_date).getTime() : 0
+    if (db !== da) return db - da
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  })
+  return { ...data, films }
 }

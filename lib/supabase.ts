@@ -35,8 +35,12 @@ export type Film = {
   title: string
   slug: string
   year: number | null
+  production_date: string | null
   format: string | null
   description: string | null
+  synopsis: string | null
+  poster_url: string | null
+  gallery_urls: string[] | null
   status: 'ongoing' | 'upcoming' | 'done'
   partner_ids: string[] | null
   created_at: string

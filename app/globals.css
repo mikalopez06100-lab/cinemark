@@ -444,6 +444,10 @@ section { padding: 8rem 4rem; }
   padding-left: 4rem;
   padding-right: 4rem;
 }
+#partenaires .brand-logo-wrap {
+  max-width: 190px;
+  height: 76px;
+}
 .clients-intro { max-width: 44rem; margin: 0 auto 4rem; }
 .clients-intro .section-label { justify-content: center; }
 .clients-intro .section-label::before { display: none; }
@@ -819,16 +823,44 @@ footer {
 }
 .film-card {
   background: var(--charcoal);
-  padding: 2.5rem 2rem;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
   transition: background 0.2s;
   position: relative;
   overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+}
+.film-card > .film-card-status,
+.film-card > .film-card-title,
+.film-card > .film-card-year,
+.film-card > .film-card-desc {
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 .film-card:hover { background: var(--surface); }
+.film-card-img {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #101010;
+  border-bottom: 1px solid var(--border);
+}
+.film-card-img-photo {
+  object-fit: cover;
+}
+.film-card-img-icon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.14;
+}
+.film-card-img-icon svg { width: 48px; height: 48px; }
 .film-card-status {
+  margin-top: 1.35rem;
   font-size: 0.65rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -866,6 +898,7 @@ footer {
   color: var(--muted);
   line-height: 1.7;
   flex: 1;
+  padding-bottom: 2rem;
 }
 .film-card-partners {
   display: flex;
@@ -881,6 +914,92 @@ footer {
   border: 1px solid rgba(184,151,62,0.3);
   padding: 0.2rem 0.6rem;
   border-radius: 2px;
+}
+
+/* FILM DETAIL */
+.film-detail {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.film-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.film-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 36%) 1fr;
+  gap: 2.5rem;
+  margin-top: 2rem;
+}
+.film-poster {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--charcoal);
+}
+.film-poster-img {
+  object-fit: cover;
+}
+.film-poster-empty {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.film-detail-content .section-text {
+  max-width: none;
+}
+.film-partners {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+.film-partner {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.55rem 0.65rem;
+  color: var(--muted);
+  text-decoration: none;
+}
+.film-partner.is-link { cursor: pointer; }
+.film-partner.is-link:hover { border-color: rgba(184,151,62,0.7); color: var(--cream); }
+.film-partner-logo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  background: var(--surface);
+  border-radius: 4px;
+  padding: 0.2rem;
+}
+.film-partner-logo--empty {
+  border: 1px dashed var(--border);
+}
+.film-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.film-gallery-item {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.film-gallery-img {
+  object-fit: cover;
 }
 
 /* BLOG */
@@ -1195,7 +1314,16 @@ footer {
   #concept, #territory, #contact, .marques-grid { grid-template-columns: 1fr; gap: 3rem; }
   .films-grid, .blog-grid, .process-grid { grid-template-columns: 1fr; }
   .brands-grid { grid-template-columns: repeat(2, 1fr); }
+  #partenaires .brand-logo-wrap { max-width: 165px; height: 68px; }
   .stats-bar { grid-template-columns: repeat(2, 1fr); }
+  .film-detail-grid { grid-template-columns: 1fr; }
+  .film-gallery { grid-template-columns: 1fr 1fr; }
   footer { flex-direction: column; gap: 1.5rem; text-align: center; }
   .form-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  #partenaires .brand-logo-wrap { max-width: 145px; height: 60px; }
+  .film-partners { grid-template-columns: 1fr; }
+  .film-gallery { grid-template-columns: 1fr; }
 }

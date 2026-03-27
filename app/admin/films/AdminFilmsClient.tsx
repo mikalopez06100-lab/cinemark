@@ -6,13 +6,15 @@ import { supabase } from '@/lib/supabase'
 import type { Film, Partner } from '@/lib/supabase'
 
 type FormState = {
-  title: string; slug: string; year: string; format: string;
-  description: string; status: Film['status']; partner_ids: string[]
+  title: string; slug: string; production_date: string; year: string; format: string;
+  description: string; synopsis: string; poster_url: string; gallery_urls: string[];
+  status: Film['status']; partner_ids: string[]
 }
 
 const emptyForm: FormState = {
-  title: '', slug: '', year: '', format: '',
-  description: '', status: 'upcoming', partner_ids: []
+  title: '', slug: '', production_date: '', year: '', format: '',
+  description: '', synopsis: '', poster_url: '', gallery_urls: [],
+  status: 'upcoming', partner_ids: []
 }
 
 function slugify(str: string) {
@@ -33,6 +35,8 @@ export default function AdminFilmsClient({
   const [editing, setEditing] = useState<Film | null>(null)
   const [form, setForm] = useState<FormState>(emptyForm)
   const [saving, setSaving] = useState(false)
+  const [uploadingPoster, setUploadingPoster] = useState(false)
+  const [uploadingGallery, setUploadingGallery] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -50,9 +54,13 @@ export default function AdminFilmsClient({
     setForm({
       title: film.title,
       slug: film.slug,
+      production_date: film.production_date ?? '',
       year: film.year?.toString() ?? '',
       format: film.format ?? '',
       description: film.description ?? '',
+      synopsis: film.synopsis ?? '',
+      poster_url: film.poster_url ?? '',
+      gallery_urls: film.gallery_urls ?? [],
       status: film.status,
       partner_ids: film.partner_ids ?? [],
     })
@@ -85,9 +93,13 @@ export default function AdminFilmsClient({
     const payload = {
       title: form.title,
       slug: form.slug,
+      production_date: form.production_date || null,
       year: form.year ? parseInt(form.year) : null,
       format: form.format || null,
       description: form.description || null,
+      synopsis: form.synopsis || null,
+      poster_url: form.poster_url || null,
+      gallery_urls: form.gallery_urls.length > 0 ? form.gallery_urls : null,
       status: form.status,
       partner_ids: form.partner_ids.length > 0 ? form.partner_ids : null,
     }
@@ -104,6 +116,22 @@ export default function AdminFilmsClient({
     if (!confirm('Supprimer ce film ?')) return
     await supabase.from('films').delete().eq('id', id)
     router.refresh()
+  }
+
+  const uploadFilmAsset = async (file: File, folder: 'film-posters' | 'film-gallery') => {
+    const ext = file.name.split('.').pop()?.toLowerCase() || 'png'
+    const safeSlug = form.slug || slugify(form.title) || 'film'
+    const path = `${folder}/${Date.now()}-${safeSlug}.${ext}`
+    const { error: uploadError } = await supabase.storage
+      .from('site-assets')
+      .upload(path, file, { upsert: true, contentType: file.type || 'image/png' })
+    if (uploadError) throw new Error(uploadError.message)
+    const { data } = supabase.storage.from('site-assets').getPublicUrl(path)
+    return data.publicUrl
+  }
+
+  const removeGalleryImage = (url: string) => {
+    setForm((prev) => ({ ...prev, gallery_urls: prev.gallery_urls.filter((u) => u !== url) }))
   }
 
   const statusBadge = (s: string) => {
@@ -125,7 +153,7 @@ export default function AdminFilmsClient({
             <tr>
               <th>Titre</th>
               <th>Statut</th>
-              <th>Année</th>
+              <th>Date prod.</th>
               <th>Format</th>
               <th>Actions</th>
             </tr>
@@ -137,7 +165,11 @@ export default function AdminFilmsClient({
               <tr key={film.id}>
                 <td style={{ fontWeight: 400 }}>{film.title}</td>
                 <td>{statusBadge(film.status)}</td>
-                <td style={{ color: 'var(--muted)' }}>{film.year ?? '—'}</td>
+                <td style={{ color: 'var(--muted)' }}>
+                  {film.production_date
+                    ? new Date(film.production_date).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' })
+                    : (film.year ?? '—')}
+                </td>
                 <td style={{ color: 'var(--muted)', fontSize: '0.82rem' }}>{film.format ?? '—'}</td>
                 <td>
                   <div className="row-actions">
@@ -168,8 +200,8 @@ export default function AdminFilmsClient({
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div className="admin-form-group">
-                <label>Année</label>
-                <input name="year" type="number" value={form.year} onChange={handleChange} placeholder="2025" />
+                <label>Date de production</label>
+                <input name="production_date" type="date" value={form.production_date} onChange={handleChange} />
               </div>
               <div className="admin-form-group">
                 <label>Statut *</label>
@@ -181,12 +213,100 @@ export default function AdminFilmsClient({
               </div>
             </div>
             <div className="admin-form-group">
+              <label>Année (fallback)</label>
+              <input name="year" type="number" value={form.year} onChange={handleChange} placeholder="2025" />
+            </div>
+            <div className="admin-form-group">
               <label>Format</label>
               <input name="format" value={form.format} onChange={handleChange} placeholder="Long métrage, Série, Clip…" />
             </div>
             <div className="admin-form-group">
               <label>Description</label>
               <textarea name="description" value={form.description} onChange={handleChange} placeholder="Description du film…" />
+            </div>
+            <div className="admin-form-group">
+              <label>Synopsis (page détail)</label>
+              <textarea name="synopsis" value={form.synopsis} onChange={handleChange} placeholder="Synopsis complet du film…" style={{ minHeight: '130px' }} />
+            </div>
+            <div className="admin-form-group">
+              <label>Affiche officielle (URL)</label>
+              <input name="poster_url" type="url" value={form.poster_url} onChange={handleChange} placeholder="https://..." />
+              <div style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                <label className="btn-admin-ghost" style={{ cursor: uploadingPoster ? 'not-allowed' : 'pointer', opacity: uploadingPoster ? 0.6 : 1 }}>
+                  {uploadingPoster ? 'Upload…' : 'Uploader affiche'}
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    style={{ display: 'none' }}
+                    disabled={uploadingPoster}
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0]
+                      if (!file) return
+                      try {
+                        setUploadingPoster(true)
+                        setError('')
+                        const url = await uploadFilmAsset(file, 'film-posters')
+                        setForm((prev) => ({ ...prev, poster_url: url }))
+                      } catch (err: any) {
+                        setError(`Upload affiche impossible: ${err.message ?? 'Erreur inconnue'}`)
+                      } finally {
+                        setUploadingPoster(false)
+                      }
+                    }}
+                  />
+                </label>
+                {form.poster_url && (
+                  <img src={form.poster_url} alt="Aperçu affiche" style={{ width: '76px', height: '112px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--border)' }} />
+                )}
+              </div>
+            </div>
+            <div className="admin-form-group">
+              <label>Images de tournage</label>
+              <div style={{ marginBottom: '0.6rem' }}>
+                <label className="btn-admin-ghost" style={{ cursor: uploadingGallery ? 'not-allowed' : 'pointer', opacity: uploadingGallery ? 0.6 : 1 }}>
+                  {uploadingGallery ? 'Upload…' : 'Ajouter des images'}
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    multiple
+                    style={{ display: 'none' }}
+                    disabled={uploadingGallery}
+                    onChange={async (e) => {
+                      const files = Array.from(e.target.files ?? [])
+                      if (files.length === 0) return
+                      try {
+                        setUploadingGallery(true)
+                        setError('')
+                        const urls = await Promise.all(files.map((f) => uploadFilmAsset(f, 'film-gallery')))
+                        setForm((prev) => ({ ...prev, gallery_urls: [...prev.gallery_urls, ...urls] }))
+                      } catch (err: any) {
+                        setError(`Upload galerie impossible: ${err.message ?? 'Erreur inconnue'}`)
+                      } finally {
+                        setUploadingGallery(false)
+                      }
+                    }}
+                  />
+                </label>
+              </div>
+              {form.gallery_urls.length > 0 ? (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
+                  {form.gallery_urls.map((url) => (
+                    <div key={url} style={{ position: 'relative' }}>
+                      <img src={url} alt="Image de tournage" style={{ width: '88px', height: '66px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--border)' }} />
+                      <button
+                        type="button"
+                        onClick={() => removeGalleryImage(url)}
+                        className="btn-admin-ghost btn-admin-danger"
+                        style={{ position: 'absolute', top: '-8px', right: '-8px', padding: '0.15rem 0.35rem', fontSize: '0.65rem' }}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p style={{ color: 'var(--muted)', fontSize: '0.78rem' }}>Aucune image ajoutée.</p>
+              )}
             </div>
 
             {partners.length > 0 && (

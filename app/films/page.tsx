@@ -14,9 +14,15 @@ export default async function FilmsPage() {
   const { data } = await supabase
     .from('films')
     .select('*')
+    .order('production_date', { ascending: false, nullsFirst: false })
     .order('created_at', { ascending: false })
 
-  const films = (data ?? []) as Film[]
+  const films = ((data ?? []) as Film[]).sort((a, b) => {
+    const da = a.production_date ? new Date(a.production_date).getTime() : 0
+    const db = b.production_date ? new Date(b.production_date).getTime() : 0
+    if (db !== da) return db - da
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  })
 
   return (
     <section id="films" style={{ paddingTop: '10rem' }}>
