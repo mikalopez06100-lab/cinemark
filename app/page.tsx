@@ -292,7 +292,7 @@ export default async function HomePage() {
           <p className="section-label">Références</p>
           <h2 className="section-title">Ils font <em>confiance</em><br />à Cinémark.</h2>
           <p className="section-text" style={{ margin: '0 auto', textAlign: 'center' }}>
-            Boissons bio et artisanales, marques locales ou grandes institutions sportives : Cinémark-Azur accompagne les enseignes ancrées dans leur territoire.
+            Boissons bio et artisanales, Cinémark-Azur accompagne les enseignes ancrées dans leur territoire.
           </p>
         </div>
         <div className="reveal">
@@ -366,7 +366,10 @@ export default async function HomePage() {
             Votre marque sur <em>grand écran</em>
           </h2>
           <p className="section-text" style={{ margin: '0 auto', textAlign: 'center' }}>
-            Le Cinéma est un support de communication puissant. Démarquez-vous avec une présence naturelle dans des films, séries et clips tournés dans le Sud.
+            Le Cinéma est un support de communication puissant, capable de créer une véritable connexion avec le public et de retenir son attention.
+          </p>
+          <p className="section-text" style={{ margin: '1rem auto 0', textAlign: 'center' }}>
+            Démarquez-vous et faites rayonner votre enseigne, grâce à une présence originale et raffinée.
           </p>
           <p style={{ textAlign: 'center', marginTop: '2rem' }}>
             <Link href="/votre-marque" className="btn-primary">

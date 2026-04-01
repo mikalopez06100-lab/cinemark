@@ -77,7 +77,7 @@ nav.scrolled { border-color: var(--border); }
   color: var(--cream);
   flex: 0 1 auto;
   min-width: 0;
-  max-width: min(46vw, 400px);
+  max-width: min(58vw, 520px);
   position: relative;
   z-index: 1;
 }
@@ -936,9 +936,9 @@ footer {
 }
 /* Logo : tailles max lisibles ; le nav / footer gardent object-fit contain */
 .site-logo--nav {
-  max-height: 148px;
+  max-height: 168px;
   width: auto !important;
-  max-width: min(56vw, 480px);
+  max-width: min(58vw, 520px);
 }
 .site-logo--footer {
   max-height: 100px;
@@ -955,7 +955,7 @@ footer {
   object-position: left top;
 }
 @media (max-width: 1100px) {
-  .site-logo--nav { max-height: 112px; max-width: min(52vw, 380px); }
+  .site-logo--nav { max-height: 120px; max-width: min(54vw, 400px); }
 }
 @media (max-width: 768px) {
   .site-logo--nav { max-height: 88px; max-width: min(60vw, 300px); }
