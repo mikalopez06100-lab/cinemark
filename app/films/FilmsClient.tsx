@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
+import { resolveMediaUrl } from '@/lib/media-url'
 import type { Film } from '@/lib/supabase'
 
 type Filter = 'all' | 'seeking_partners' | 'upcoming' | 'ongoing' | 'postprod' | 'finalized'
@@ -43,12 +44,14 @@ export default function FilmsClient({ films }: { films: Film[] }) {
         <p style={{ color: 'var(--muted)', padding: '3rem 0' }}>Aucune production dans cette catégorie.</p>
       ) : (
         <div className="films-grid films-grid--list">
-          {visible.map((film) => (
+          {visible.map((film) => {
+            const posterSrc = resolveMediaUrl(film.poster_url)
+            return (
             <Link key={film.id} href={`/films/${film.slug}`} className="film-card film-card--row">
               <div className="film-card-img">
-                {film.poster_url ? (
+                {posterSrc ? (
                   <Image
-                    src={film.poster_url}
+                    src={posterSrc}
                     alt={`Affiche ${film.title}`}
                     fill
                     sizes="(max-width: 900px) 45vw, 220px"
@@ -82,7 +85,8 @@ export default function FilmsClient({ films }: { films: Film[] }) {
                 )}
               </div>
             </Link>
-          ))}
+            )
+          })}
         </div>
       )}
     </>

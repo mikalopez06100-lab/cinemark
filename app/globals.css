@@ -802,25 +802,33 @@ blockquote::before {
   background: var(--charcoal);
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6rem;
+  gap: 2.5rem;
   align-items: start;
+  padding-top: 4.5rem;
+  padding-bottom: 4.5rem;
 }
-.contact-info { padding-top: 0.5rem; }
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding-top: 0;
+}
 .contact-detail {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  margin-top: 3rem;
+  gap: 0.15rem;
+  margin-top: 0;
 }
 .contact-detail-label {
-  font-size: 0.68rem;
-  letter-spacing: 0.15em;
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--gold);
 }
 .contact-detail-val {
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: var(--cream);
+  line-height: 1.35;
 }
 .contact-detail-val a {
   color: inherit;
@@ -889,6 +897,20 @@ blockquote::before {
 }
 .form-submit:hover { background: var(--gold-lt); transform: translateY(-1px); }
 .form-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+#contact .home-contact-form .form-group {
+  margin-bottom: 1rem;
+}
+#contact .home-contact-form .form-group textarea {
+  min-height: 100px;
+}
+#contact .home-contact-form .form-submit {
+  padding: 0.95rem 1.25rem;
+  margin-top: 0.25rem;
+}
+#contact .home-contact-form--success {
+  padding: 1.5rem 1.25rem;
+}
 
 /* FOOTER */
 footer {
@@ -1609,7 +1631,19 @@ footer {
     display: none;
   }
   #hero, section { padding-left: max(1rem, env(safe-area-inset-left)); padding-right: max(1rem, env(safe-area-inset-right)); }
-  #concept, #territory, #contact, .marques-grid { grid-template-columns: 1fr; gap: 3rem; }
+  #concept, #territory, .marques-grid { grid-template-columns: 1fr; gap: 3rem; }
+  #contact {
+    grid-template-columns: 1fr;
+    gap: 1.35rem;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+  #contact .contact-info {
+    gap: 0.55rem;
+  }
+  #contact .contact-detail-val {
+    font-size: 0.9rem;
+  }
   .films-grid, .blog-grid, .process-grid { grid-template-columns: 1fr; }
   .film-card--row {
     grid-template-columns: 1fr;
@@ -1647,6 +1681,17 @@ footer {
 }
 
 @media (max-width: 640px) {
+  #contact {
+    gap: 1.1rem;
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+  }
+  #contact .home-contact-form .form-group {
+    margin-bottom: 0.85rem;
+  }
+  #contact .home-contact-form .form-group textarea {
+    min-height: 88px;
+  }
   #partenaires-section .brand-logo-wrap,
   #partenaires .brand-logo-wrap { max-width: 145px; height: 60px; }
   .film-partners { grid-template-columns: 1fr; }

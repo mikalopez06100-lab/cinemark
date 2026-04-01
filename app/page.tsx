@@ -5,6 +5,7 @@ import RevealWrapper from '@/components/RevealWrapper'
 import HomeClient from '@/components/HomeClient'
 import { getConceptImageUrl } from '@/lib/concept-image'
 import { getHeroBackgroundImageUrl } from '@/lib/hero-background'
+import { resolveMediaUrl } from '@/lib/media-url'
 import { supabase } from '@/lib/supabase'
 import type { Film, BlogPost, Partner } from '@/lib/supabase'
 
@@ -202,12 +203,14 @@ export default async function HomePage() {
 
         {films.length > 0 ? (
           <div className="films-grid films-grid--home-list reveal">
-            {films.map((film) => (
+            {films.map((film) => {
+              const posterSrc = resolveMediaUrl(film.poster_url)
+              return (
               <Link key={film.id} href={`/films/${film.slug}`} className="film-card film-card--row" data-status={film.status}>
                 <div className="film-card-img">
-                  {film.poster_url ? (
+                  {posterSrc ? (
                     <Image
-                      src={film.poster_url}
+                      src={posterSrc}
                       alt={`Affiche ${film.title}`}
                       fill
                       sizes="(max-width: 900px) 45vw, 220px"
@@ -238,7 +241,8 @@ export default async function HomePage() {
                   {film.description && <p className="film-card-desc">{film.description}</p>}
                 </div>
               </Link>
-            ))}
+              )
+            })}
           </div>
         ) : (
           <div className="films-grid films-grid--home-list reveal">
@@ -401,16 +405,18 @@ export default async function HomePage() {
             { id: '1', slug: '#', category: 'Coulisses', title: 'Soleil d\'Azur : 3 semaines de tournage à Menton', excerpt: 'Retour sur le tournage du dernier long métrage accompagné par Cinémark, entre soleils de façade et nuits de production.', published_at: '2025-05-15' },
             { id: '2', slug: '#', category: 'Tendances', title: 'Pourquoi le placement produit local explose en 2025', excerpt: 'Les marques régionales découvrent enfin ce que les multinationales savent depuis des années : le cinéma reste le média le plus mémorable.', published_at: '2025-05-08' },
             { id: '3', slug: '#', category: 'Partenariat', title: 'OGC Nice & Cinémark : un an de collaboration', excerpt: 'Retour sur 12 mois de présence de l\'OGC Nice dans les productions Cinémark, et les résultats mesurés en termes de notoriété.', published_at: '2025-05-02' },
-          ] as BlogPost[]).map((post) => (
+          ] as BlogPost[]).map((post) => {
+            const coverSrc = resolveMediaUrl(post.cover_url)
+            return (
             <Link
               key={post.id}
               href={post.slug === '#' ? '/blog' : `/blog/${post.slug}`}
               className="blog-card"
             >
               <div className="blog-card-img">
-                {post.cover_url ? (
+                {coverSrc ? (
                   <Image
-                    src={post.cover_url}
+                    src={coverSrc}
                     alt=""
                     fill
                     sizes="(max-width: 900px) 100vw, 33vw"
@@ -438,7 +444,8 @@ export default async function HomePage() {
                 </div>
               </div>
             </Link>
-          ))}
+            )
+          })}
         </div>
 
         <div style={{ marginTop: '3rem', textAlign: 'center' }}>
@@ -452,20 +459,8 @@ export default async function HomePage() {
       </section>
 
       {/* CONTACT */}
-      <section id="contact">
+      <section id="contact" aria-label="Contact">
         <div className="contact-info reveal">
-          <p className="section-label">Contact</p>
-          <h2 className="section-title">Vous préparez un tournage<br />dans le <em>Sud</em> ?</h2>
-          <p className="section-text">
-            <strong>Vous représentez une marque ou une production audiovisuelle ?</strong> Nous vous accompagnons de la prise de contact
-            à la mise en relation, pour construire des collaborations utiles, cohérentes et visibles sur le territoire.
-            Que vous cherchiez des partenaires pour un tournage ou une présence de marque à l&apos;écran, notre équipe vous guide à chaque étape.
-          </p>
-          <ul className="territory-list" style={{ marginTop: '1.5rem' }}>
-            <li>Un budget complémentaire</li>
-            <li>Des partenaires impliqués</li>
-            <li>Des économies réalisées (régie, craft, costumes, décors, etc.)</li>
-          </ul>
           <div className="contact-detail">
             <span className="contact-detail-label">Instagram</span>
             <span className="contact-detail-val">

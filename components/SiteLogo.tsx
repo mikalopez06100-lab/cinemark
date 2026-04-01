@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import { useState } from 'react'
+import { resolveMediaUrl } from '@/lib/media-url'
 import { getSiteLogoRemoteUrl } from '@/lib/site-logo'
 
 const FALLBACK_SRC = '/images/cinemark-logo.png'
@@ -22,7 +23,7 @@ export default function SiteLogo({
   variant: Variant
   priority?: boolean
 }) {
-  const remote = getSiteLogoRemoteUrl()
+  const remote = resolveMediaUrl(getSiteLogoRemoteUrl())
   const [src, setSrc] = useState(remote ?? FALLBACK_SRC)
   const { width, height, className } = SIZES[variant]
 

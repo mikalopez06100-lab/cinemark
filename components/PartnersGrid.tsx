@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
+import { resolveMediaUrl } from '@/lib/media-url'
 import type { Partner } from '@/lib/supabase'
 
 export type PartnerGridItem = Pick<Partner, 'id' | 'name' | 'category' | 'logo_url' | 'website'> & {
@@ -36,12 +37,14 @@ export default function PartnersGrid({
 
   return (
     <div className="brands-grid">
-      {displayed.map((brand) => (
+      {displayed.map((brand) => {
+        const logoSrc = resolveMediaUrl(brand.logo_url)
+        return (
         <div
           key={brand.id}
           className={`brand-tile${brand.featured ? ' featured' : ''}`}
         >
-          {brand.logo_url ? (
+          {logoSrc ? (
             <div className="brand-logo-wrap">
               {brand.website ? (
                 <a
@@ -52,7 +55,7 @@ export default function PartnersGrid({
                   aria-label={`Visiter le site de ${brand.name}`}
                 >
                   <Image
-                    src={brand.logo_url}
+                    src={logoSrc}
                     alt={`Logo ${brand.name}`}
                     fill
                     sizes="(max-width: 900px) 50vw, 25vw"
@@ -61,7 +64,7 @@ export default function PartnersGrid({
                 </a>
               ) : (
                 <Image
-                  src={brand.logo_url}
+                  src={logoSrc}
                   alt={`Logo ${brand.name}`}
                   fill
                   sizes="(max-width: 900px) 50vw, 25vw"
@@ -75,7 +78,8 @@ export default function PartnersGrid({
           <span className="brand-name">{brand.name}</span>
           <span className="brand-cat">{brand.category ?? 'Partenaire'}</span>
         </div>
-      ))}
+        )
+      })}
     </div>
   )
 }

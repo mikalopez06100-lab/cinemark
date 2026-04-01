@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { resolveMediaUrl } from '@/lib/media-url'
 import { supabase } from '@/lib/supabase'
 import type { BlogPost } from '@/lib/supabase'
 
@@ -315,13 +316,16 @@ ${body}
                     }}
                   />
                 </label>
-                {form.cover_url && (
-                  <img
-                    src={form.cover_url}
-                    alt="Aperçu couverture article"
-                    style={{ width: '96px', height: '56px', objectFit: 'cover', border: '1px solid var(--border)', borderRadius: '4px' }}
-                  />
-                )}
+                {(() => {
+                  const src = resolveMediaUrl(form.cover_url)
+                  return src ? (
+                    <img
+                      src={src}
+                      alt="Aperçu couverture article"
+                      style={{ width: '96px', height: '56px', objectFit: 'cover', border: '1px solid var(--border)', borderRadius: '4px' }}
+                    />
+                  ) : null
+                })()}
               </div>
             </div>
             <div className="admin-form-group">

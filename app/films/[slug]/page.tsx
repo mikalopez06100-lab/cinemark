@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { resolveMediaUrl, resolveMediaUrls } from '@/lib/media-url'
 import { supabase } from '@/lib/supabase'
 import type { Film, Partner } from '@/lib/supabase'
 
@@ -44,10 +45,11 @@ export default async function FilmDetailPage({ params }: Props) {
     partners = (partnersData ?? []) as Partner[]
   }
 
-  const gallery = film.gallery_urls ?? []
-  const stills = film.gallery_stills_urls ?? []
-  const bts = film.gallery_bts_urls ?? []
-  const promo = film.gallery_promo_urls ?? []
+  const gallery = resolveMediaUrls(film.gallery_urls)
+  const stills = resolveMediaUrls(film.gallery_stills_urls)
+  const bts = resolveMediaUrls(film.gallery_bts_urls)
+  const promo = resolveMediaUrls(film.gallery_promo_urls)
+  const posterSrc = resolveMediaUrl(film.poster_url)
 
   return (
     <section style={{ paddingTop: '10rem' }}>
@@ -69,9 +71,9 @@ export default async function FilmDetailPage({ params }: Props) {
 
         <div className="film-detail-grid">
           <div className="film-poster">
-            {film.poster_url ? (
+            {posterSrc ? (
               <Image
-                src={film.poster_url}
+                src={posterSrc}
                 alt={`Affiche officielle ${film.title}`}
                 fill
                 sizes="(max-width: 900px) 100vw, 40vw"
@@ -126,7 +128,9 @@ export default async function FilmDetailPage({ params }: Props) {
               <p className="section-text">Aucun partenaire associé pour le moment.</p>
             ) : (
               <div className="film-partners">
-                {partners.map((p) => (
+                {partners.map((p) => {
+                  const logoSrc = resolveMediaUrl(p.logo_url)
+                  return (
                   <a
                     key={p.id}
                     href={p.website ?? '#'}
@@ -134,14 +138,15 @@ export default async function FilmDetailPage({ params }: Props) {
                     rel={p.website ? 'noopener noreferrer' : undefined}
                     className={`film-partner${p.website ? ' is-link' : ''}`}
                   >
-                    {p.logo_url ? (
-                      <img src={p.logo_url} alt={`Logo ${p.name}`} className="film-partner-logo" />
+                    {logoSrc ? (
+                      <img src={logoSrc} alt={`Logo ${p.name}`} className="film-partner-logo" />
                     ) : (
                       <div className="film-partner-logo film-partner-logo--empty" />
                     )}
                     <span>{p.name}</span>
                   </a>
-                ))}
+                  )
+                })}
               </div>
             )}
           </div>

@@ -27,15 +27,15 @@ export default function HomeClient() {
 
   if (status === 'success') {
     return (
-      <div className="reveal reveal-delay-1" style={{ padding: '3rem', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '2px' }}>
-        <p style={{ fontFamily: 'var(--serif)', fontSize: '1.5rem', color: 'var(--cream)', marginBottom: '1rem' }}>Message envoyé.</p>
-        <p style={{ color: 'var(--muted)' }}>Nous vous répondrons sous 48h.</p>
+      <div className="reveal reveal-delay-1 home-contact-form home-contact-form--success" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '2px' }}>
+        <p style={{ fontFamily: 'var(--serif)', fontSize: 'clamp(1.15rem, 4vw, 1.4rem)', color: 'var(--cream)', marginBottom: '0.5rem' }}>Message envoyé.</p>
+        <p style={{ color: 'var(--muted)', fontSize: '0.9rem', lineHeight: 1.5 }}>Nous vous répondrons sous 48h.</p>
       </div>
     )
   }
 
   return (
-    <div className="reveal reveal-delay-1">
+    <div className="reveal reveal-delay-1 home-contact-form">
       <div className="form-row">
         <div className="form-group">
           <label>Prénom</label>

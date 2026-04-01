@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { resolveMediaUrl } from '@/lib/media-url'
 import { supabase } from '@/lib/supabase'
 import type { Partner } from '@/lib/supabase'
 
@@ -176,13 +177,16 @@ export default function AdminPartnersClient({ partners }: { partners: Partner[] 
                     }}
                   />
                 </label>
-                {form.logo_url && (
-                  <img
-                    src={form.logo_url}
-                    alt="Aperçu logo partenaire"
-                    style={{ width: '64px', height: '64px', objectFit: 'contain', border: '1px solid var(--border)', borderRadius: '4px', background: 'var(--surface)', padding: '0.35rem' }}
-                  />
-                )}
+                {(() => {
+                  const src = resolveMediaUrl(form.logo_url)
+                  return src ? (
+                    <img
+                      src={src}
+                      alt="Aperçu logo partenaire"
+                      style={{ width: '64px', height: '64px', objectFit: 'contain', border: '1px solid var(--border)', borderRadius: '4px', background: 'var(--surface)', padding: '0.35rem' }}
+                    />
+                  ) : null
+                })()}
               </div>
             </div>
             <div className="admin-form-group">

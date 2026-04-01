@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import { resolveMediaUrl } from '@/lib/media-url'
 import { supabase } from '@/lib/supabase'
 import type { BlogPost } from '@/lib/supabase'
 
@@ -32,12 +33,14 @@ export default async function BlogPage() {
         <p style={{ color: 'var(--muted)' }}>Aucun article publié pour le moment.</p>
       ) : (
         <div className="blog-grid">
-          {posts.map((post) => (
+          {posts.map((post) => {
+            const coverSrc = resolveMediaUrl(post.cover_url)
+            return (
             <Link key={post.id} href={`/blog/${post.slug}`} className="blog-card">
               <div className="blog-card-img">
-                {post.cover_url ? (
+                {coverSrc ? (
                   <Image
-                    src={post.cover_url}
+                    src={coverSrc}
                     alt=""
                     fill
                     sizes="(max-width: 900px) 100vw, 33vw"
@@ -67,7 +70,8 @@ export default async function BlogPage() {
                 </div>
               </div>
             </Link>
-          ))}
+            )
+          })}
         </div>
       )}
     </section>

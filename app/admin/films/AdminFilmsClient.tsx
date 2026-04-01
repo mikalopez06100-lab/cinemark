@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { resolveMediaUrl } from '@/lib/media-url'
 import { supabase } from '@/lib/supabase'
 import type { Film, Partner } from '@/lib/supabase'
 
@@ -332,9 +333,12 @@ export default function AdminFilmsClient({
                     }}
                   />
                 </label>
-                {form.poster_url && (
-                  <img src={form.poster_url} alt="Aperçu affiche" style={{ width: '76px', height: '112px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--border)' }} />
-                )}
+                {(() => {
+                  const src = resolveMediaUrl(form.poster_url)
+                  return src ? (
+                    <img src={src} alt="Aperçu affiche" style={{ width: '76px', height: '112px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--border)' }} />
+                  ) : null
+                })()}
               </div>
             </div>
             <div className="admin-form-group">
@@ -369,7 +373,7 @@ export default function AdminFilmsClient({
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
                   {form.gallery_urls.map((url) => (
                     <div key={url} style={{ position: 'relative' }}>
-                      <img src={url} alt="Image de tournage" style={{ width: '88px', height: '66px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--border)' }} />
+                      <img src={resolveMediaUrl(url) ?? url} alt="Image de tournage" style={{ width: '88px', height: '66px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--border)' }} />
                       <button
                         type="button"
                         onClick={() => removeGalleryImage(url)}
@@ -417,7 +421,7 @@ export default function AdminFilmsClient({
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
                   {form.gallery_stills_urls.map((url) => (
                     <div key={url} style={{ position: 'relative' }}>
-                      <img src={url} alt="Image tirée du film" style={{ width: '88px', height: '66px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--border)' }} />
+                      <img src={resolveMediaUrl(url) ?? url} alt="Image tirée du film" style={{ width: '88px', height: '66px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--border)' }} />
                       <button type="button" onClick={() => removeCategorizedGalleryImage('gallery_stills_urls', url)} className="btn-admin-ghost btn-admin-danger" style={{ position: 'absolute', top: '-8px', right: '-8px', padding: '0.15rem 0.35rem', fontSize: '0.65rem' }}>×</button>
                     </div>
                   ))}
@@ -456,7 +460,7 @@ export default function AdminFilmsClient({
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
                   {form.gallery_promo_urls.map((url) => (
                     <div key={url} style={{ position: 'relative' }}>
-                      <img src={url} alt="Photo promotionnelle" style={{ width: '88px', height: '66px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--border)' }} />
+                      <img src={resolveMediaUrl(url) ?? url} alt="Photo promotionnelle" style={{ width: '88px', height: '66px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--border)' }} />
                       <button type="button" onClick={() => removeCategorizedGalleryImage('gallery_promo_urls', url)} className="btn-admin-ghost btn-admin-danger" style={{ position: 'absolute', top: '-8px', right: '-8px', padding: '0.15rem 0.35rem', fontSize: '0.65rem' }}>×</button>
                     </div>
                   ))}
