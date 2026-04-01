@@ -43,7 +43,8 @@ async function getHomeData() {
   }
 }
 
-export const revalidate = 60
+/** Évite une page d’accueil figée en cache (contenu Supabase + section contact à jour). */
+export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   const { films, posts, partners, filmsCount, partnersCount } = getHomeDataSorted(await getHomeData())
