@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .eq('published', true)
     .single()
 
-  if (!data) return { title: 'Article — Cinémark' }
+  if (!data) return { title: 'Actualité — Cinémark' }
   return {
     title: `${data.title} — Cinémark`,
     description: data.excerpt ?? undefined,
@@ -38,7 +38,7 @@ export default async function BlogPostPage({ params }: Props) {
   return (
     <article style={{ paddingTop: '10rem', maxWidth: '800px', margin: '0 auto', padding: '10rem 4rem 8rem' }}>
       <Link href="/blog" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.75rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--muted)', textDecoration: 'none', marginBottom: '3rem', transition: 'color 0.2s' }} className="btn-ghost">
-        ← Retour au blog
+        ← Retour aux actualités
       </Link>
 
       {post.category && (

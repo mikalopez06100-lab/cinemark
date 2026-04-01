@@ -1,27 +1,26 @@
 import type { Metadata } from 'next'
-import MarquesClient from './MarquesClient'
+import Image from 'next/image'
 
 export const metadata: Metadata = {
-  title: 'Candidature Marques — Cinémark',
-  description: 'Rejoignez les marques locales qui ont choisi de parler autrement. Déposez votre candidature — nous vous contactons sous 48h.',
+  title: 'Votre tournage — Cinémark',
+  description: 'Vous préparez un tournage dans le Sud ? Nous vous aidons à trouver des partenaires et des placements de produit cohérents.',
 }
 
 export default function MarquesPage() {
   return (
     <section id="marques" style={{ paddingTop: '10rem' }}>
       <div className="marques-intro">
-        <p className="section-label">Candidature marques</p>
-        <h1 className="section-title">Votre marque mérite<br />d&apos;<em>être vue</em>.</h1>
-        <p className="section-text">Rejoignez les marques locales qui ont choisi de parler autrement. Déposez votre candidature — nous vous contactons sous 48h.</p>
+        <p className="section-label">Votre tournage</p>
+        <h1 className="section-title">Vous préparez un tournage<br />dans le <em>Sud</em> ?</h1>
+        <p className="section-text">Nous accompagnons les productions audiovisuelles dans la recherche de partenaires et de placements de produit adaptés à votre univers cinématographique.</p>
       </div>
 
       <div className="marques-grid">
         <div className="marques-why">
           {[
-            { num: '01', title: 'Visibilité organique', text: "Votre produit apparaît naturellement dans la narration. Pas de rupture, pas d'intrusion — une présence qui s'intègre à l'histoire." },
-            { num: '02', title: 'Impact durable', text: "Un film reste disponible des années après sa sortie. Votre placement continue de générer de la visibilité longtemps après la diffusion initiale." },
-            { num: '03', title: 'Ancrage territorial', text: "Les productions régionales parlent à un public local précis. Votre marque bénéficie d'une association forte avec le territoire." },
-            { num: '04', title: 'Extraits exploitables', text: "Vous recevez les extraits avec votre produit pour vos propres réseaux, en complément de la diffusion principale." },
+            { num: '01', title: 'Un budget complémentaire', text: 'Nous analysons votre projet, puis nous sollicitons les partenaires les plus adaptés pour compléter son financement.' },
+            { num: '02', title: 'Des partenaires impliqués', text: 'Les enseignes que nous solliciterons ne seront pas de simples partenaires, mais de véritables acteurs engagés dans la réussite de votre projet et de sa diffusion.' },
+            { num: '03', title: 'Des économies réalisées', text: 'Hébergement, régie, craft, costumes, décors : les partenariats activés permettent de réduire les coûts de production.' },
           ].map((item) => (
             <div key={item.num} className="marques-why-item">
               <div className="marques-why-num">{item.num}</div>
@@ -33,7 +32,16 @@ export default function MarquesPage() {
           ))}
         </div>
 
-        <MarquesClient />
+        <div className="marques-tournage-visual">
+          <Image
+            src="/images/votre-tournage-scene.png"
+            alt="Plateau de tournage de nuit, clap et équipe — Cinémark accompagne les productions"
+            fill
+            sizes="(max-width: 900px) 100vw, 45vw"
+            className="marques-tournage-visual-img"
+            priority
+          />
+        </div>
       </div>
     </section>
   )

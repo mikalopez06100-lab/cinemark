@@ -190,6 +190,8 @@ tr:hover td { background: rgba(255,255,255,0.02); }
 .badge-ongoing  { background: rgba(74,222,128,0.12); color: #4ade80; }
 .badge-upcoming { background: rgba(184,151,62,0.15); color: var(--gold); }
 .badge-done     { background: rgba(255,255,255,0.06); color: var(--muted); }
+.badge-postprod { background: rgba(96,165,250,0.14); color: #93c5fd; }
+.badge-seeking { background: rgba(245,158,11,0.14); color: #fbbf24; }
 .badge-published { background: rgba(74,222,128,0.12); color: #4ade80; }
 .badge-draft    { background: rgba(255,255,255,0.06); color: var(--muted); }
 .badge-new      { background: rgba(96,165,250,0.15); color: #60a5fa; }

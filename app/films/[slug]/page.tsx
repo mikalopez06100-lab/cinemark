@@ -45,6 +45,9 @@ export default async function FilmDetailPage({ params }: Props) {
   }
 
   const gallery = film.gallery_urls ?? []
+  const stills = film.gallery_stills_urls ?? []
+  const bts = film.gallery_bts_urls ?? []
+  const promo = film.gallery_promo_urls ?? []
 
   return (
     <section style={{ paddingTop: '10rem' }}>
@@ -80,6 +83,14 @@ export default async function FilmDetailPage({ params }: Props) {
           </div>
 
           <div className="film-detail-content">
+            {(film.director || film.production || film.duration) && (
+              <>
+                <p className="section-label">Fiche technique</p>
+                {film.director && <p className="section-text" style={{ marginTop: '-0.35rem' }}><strong>Réalisation :</strong> {film.director}</p>}
+                {film.production && <p className="section-text"><strong>Productions :</strong> {film.production}</p>}
+                <p className="section-text" style={{ marginBottom: '1.2rem' }}><strong>Durée :</strong> {film.duration ?? '—'}</p>
+              </>
+            )}
             {film.description && (
               <>
                 <p className="section-label">Présentation</p>
@@ -91,6 +102,22 @@ export default async function FilmDetailPage({ params }: Props) {
               <>
                 <p className="section-label" style={{ marginTop: '2rem' }}>Synopsis</p>
                 <p className="section-text">{film.synopsis}</p>
+              </>
+            )}
+            {(film.casting || film.diffusion || film.awards || film.external_url) && (
+              <>
+                <p className="section-label" style={{ marginTop: '2rem' }}>Autres informations</p>
+                {film.casting && <p className="section-text"><strong>Casting :</strong> {film.casting}</p>}
+                {film.diffusion && <p className="section-text"><strong>Diffusion :</strong> {film.diffusion}</p>}
+                {film.awards && <p className="section-text"><strong>Prix :</strong> {film.awards}</p>}
+                {film.external_url && (
+                  <p className="section-text">
+                    <strong>Lien :</strong>{' '}
+                    <a href={film.external_url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--gold)' }}>
+                      Page externe du film
+                    </a>
+                  </p>
+                )}
               </>
             )}
 
@@ -120,22 +147,48 @@ export default async function FilmDetailPage({ params }: Props) {
           </div>
         </div>
 
-        {gallery.length > 0 && (
+        {(stills.length > 0 || bts.length > 0 || promo.length > 0 || gallery.length > 0) && (
           <>
-            <p className="section-label" style={{ marginTop: '3.5rem' }}>Galerie de tournage</p>
-            <div className="film-gallery">
-              {gallery.map((url, i) => (
-                <div key={`${url}-${i}`} className="film-gallery-item">
-                  <Image
-                    src={url}
-                    alt={`Photo de tournage ${i + 1} — ${film.title}`}
-                    fill
-                    sizes="(max-width: 900px) 100vw, 33vw"
-                    className="film-gallery-img"
-                  />
-                </div>
-              ))}
-            </div>
+            {stills.length > 0 && <p className="section-label" style={{ marginTop: '3.5rem' }}>Images tirées du film</p>}
+            {stills.length > 0 && (
+              <div className="film-gallery">
+                {stills.map((url, i) => (
+                  <div key={`${url}-${i}`} className="film-gallery-item">
+                    <Image src={url} alt={`Image tirée du film ${i + 1} — ${film.title}`} fill sizes="(max-width: 900px) 100vw, 33vw" className="film-gallery-img" />
+                  </div>
+                ))}
+              </div>
+            )}
+            {bts.length > 0 && <p className="section-label" style={{ marginTop: '3.5rem' }}>Photos de tournage</p>}
+            {bts.length > 0 && (
+              <div className="film-gallery">
+                {bts.map((url, i) => (
+                  <div key={`${url}-${i}`} className="film-gallery-item">
+                    <Image src={url} alt={`Photo de tournage ${i + 1} — ${film.title}`} fill sizes="(max-width: 900px) 100vw, 33vw" className="film-gallery-img" />
+                  </div>
+                ))}
+              </div>
+            )}
+            {promo.length > 0 && <p className="section-label" style={{ marginTop: '3.5rem' }}>Photos promotionnelles</p>}
+            {promo.length > 0 && (
+              <div className="film-gallery">
+                {promo.map((url, i) => (
+                  <div key={`${url}-${i}`} className="film-gallery-item">
+                    <Image src={url} alt={`Photo promotionnelle ${i + 1} — ${film.title}`} fill sizes="(max-width: 900px) 100vw, 33vw" className="film-gallery-img" />
+                  </div>
+                ))}
+              </div>
+            )}
+            {gallery.length > 0 && <p className="section-label" style={{ marginTop: '3.5rem' }}>Galerie</p>}
+            {gallery.length > 0 && (
+              <div className="film-gallery">
+                {gallery.map((url, i) => (
+                  <div key={`${url}-${i}`} className="film-gallery-item">
+                    <Image src={url} alt={`Image ${i + 1} — ${film.title}`} fill sizes="(max-width: 900px) 100vw, 33vw" className="film-gallery-img" />
+                  </div>
+                ))}
+              </div>
+            )}
           </>
         )}
       </div>

@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase'
 import type { BlogPost } from '@/lib/supabase'
 
 export const metadata: Metadata = {
-  title: 'Blog — Cinémark',
+  title: 'Actualités — Cinémark',
   description: 'Coulisses de tournages, tendances du placement produit et actualités de la production régionale.',
 }
 

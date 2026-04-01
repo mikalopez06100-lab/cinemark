@@ -5,12 +5,14 @@ import Link from 'next/link'
 import { useState } from 'react'
 import type { Film } from '@/lib/supabase'
 
-type Filter = 'all' | 'ongoing' | 'upcoming' | 'done'
+type Filter = 'all' | 'seeking_partners' | 'upcoming' | 'ongoing' | 'postprod' | 'finalized'
 
 const statusLabel: Record<string, string> = {
-  ongoing: 'En cours de tournage',
-  upcoming: 'À venir',
-  done: 'Réalisé',
+  seeking_partners: 'En recherche de partenaires',
+  upcoming: 'Tournage à venir',
+  ongoing: 'Tournage en cours',
+  postprod: 'En cours de post-production',
+  finalized: 'Projet finalisé',
 }
 
 export default function FilmsClient({ films }: { films: Film[] }) {
@@ -21,16 +23,18 @@ export default function FilmsClient({ films }: { films: Film[] }) {
   return (
     <>
       <div className="films-filters">
-        {(['all', 'ongoing', 'upcoming', 'done'] as Filter[]).map((f) => (
+        {(['all', 'seeking_partners', 'upcoming', 'ongoing', 'postprod', 'finalized'] as Filter[]).map((f) => (
           <button
             key={f}
             className={`filter-btn ${filter === f ? 'active' : ''}`}
             onClick={() => setFilter(f)}
           >
             {f === 'all' && 'Tous'}
-            {f === 'ongoing' && <><span className="status-dot ongoing" style={{ display: 'inline-block', marginRight: '0.4rem' }} />En cours</>}
+            {f === 'seeking_partners' && 'En recherche'}
             {f === 'upcoming' && 'À venir'}
-            {f === 'done' && 'Réalisés'}
+            {f === 'ongoing' && <><span className="status-dot ongoing" style={{ display: 'inline-block', marginRight: '0.4rem' }} />En cours</>}
+            {f === 'postprod' && 'Post-prod'}
+            {f === 'finalized' && 'Finalisé'}
           </button>
         ))}
       </div>
@@ -38,16 +42,16 @@ export default function FilmsClient({ films }: { films: Film[] }) {
       {visible.length === 0 ? (
         <p style={{ color: 'var(--muted)', padding: '3rem 0' }}>Aucune production dans cette catégorie.</p>
       ) : (
-        <div className="films-grid">
+        <div className="films-grid films-grid--list">
           {visible.map((film) => (
-            <Link key={film.id} href={`/films/${film.slug}`} className="film-card">
+            <Link key={film.id} href={`/films/${film.slug}`} className="film-card film-card--row">
               <div className="film-card-img">
                 {film.poster_url ? (
                   <Image
                     src={film.poster_url}
                     alt={`Affiche ${film.title}`}
                     fill
-                    sizes="(max-width: 900px) 100vw, 33vw"
+                    sizes="(max-width: 900px) 45vw, 220px"
                     className="film-card-img-photo"
                   />
                 ) : (
@@ -60,21 +64,23 @@ export default function FilmsClient({ films }: { films: Film[] }) {
                   </div>
                 )}
               </div>
-              <div className={`film-card-status status-${film.status}`}>
-                <span className={`status-dot ${film.status}`} />
-                {statusLabel[film.status]}
-                {film.status === 'done' && film.year ? ` — ${film.year}` : ''}
+              <div className="film-card-body">
+                <div className={`film-card-status status-${film.status}`}>
+                  <span className={`status-dot ${film.status}`} />
+                  {statusLabel[film.status]}
+                  {film.status === 'finalized' && film.year ? ` — ${film.year}` : ''}
+                </div>
+                <div className="film-card-title">{film.title}</div>
+                <div className="film-card-year">
+                  {(film.production_date
+                    ? new Date(film.production_date).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
+                    : film.year) ?? '—'}
+                  {film.format ? ` · ${film.format}` : ''}
+                </div>
+                {film.description && (
+                  <p className="film-card-desc">{film.description}</p>
+                )}
               </div>
-              <div className="film-card-title">{film.title}</div>
-              <div className="film-card-year">
-                {(film.production_date
-                  ? new Date(film.production_date).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
-                  : film.year) ?? '—'}
-                {film.format ? ` · ${film.format}` : ''}
-              </div>
-              {film.description && (
-                <p className="film-card-desc">{film.description}</p>
-              )}
             </Link>
           ))}
         </div>

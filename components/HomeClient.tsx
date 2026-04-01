@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase'
 export default function HomeClient() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [form, setForm] = useState({
-    firstName: '', lastName: '', brand: '', email: '', type: '', message: ''
+    firstName: '', lastName: '', brand: '', email: '', message: ''
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -18,7 +18,6 @@ export default function HomeClient() {
     setStatus('loading')
     const { error } = await supabase.from('applications').insert({
       brand_name: form.brand,
-      sector: form.type || null,
       contact_name: `${form.firstName} ${form.lastName}`.trim() || null,
       email: form.email,
       message: form.message || null,
@@ -48,26 +47,12 @@ export default function HomeClient() {
         </div>
       </div>
       <div className="form-group">
-        <label>Marque / Entreprise</label>
+        <label>Marque / Entreprise / Production</label>
         <input name="brand" type="text" placeholder="Nom de votre marque" value={form.brand} onChange={handleChange} />
       </div>
       <div className="form-group">
         <label>Email</label>
         <input name="email" type="email" placeholder="votre@email.com" value={form.email} onChange={handleChange} />
-      </div>
-      <div className="form-group">
-        <label>Type de produit</label>
-        <select name="type" value={form.type} onChange={handleChange}>
-          <option value="" disabled>Sélectionner une catégorie</option>
-          <option>Boisson artisanale</option>
-          <option>Gastronomie / Épicerie fine</option>
-          <option>Art & Décoration</option>
-          <option>Mode & Accessoires</option>
-          <option>Cosmétique & Bien-être</option>
-          <option>Hôtellerie & Restauration</option>
-          <option>Sport & Loisirs</option>
-          <option>Autre</option>
-        </select>
       </div>
       <div className="form-group">
         <label>Votre message</label>

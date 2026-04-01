@@ -20,15 +20,17 @@ function shufflePartners(list: PartnerGridItem[]): PartnerGridItem[] {
 export default function PartnersGrid({
   partners,
   limit,
+  shuffle = true,
 }: {
   partners: PartnerGridItem[]
   limit?: number
+  shuffle?: boolean
 }) {
   const [shuffled, setShuffled] = useState<PartnerGridItem[]>(partners)
 
   useEffect(() => {
-    setShuffled(shufflePartners(partners))
-  }, [partners])
+    setShuffled(shuffle ? shufflePartners(partners) : partners)
+  }, [partners, shuffle])
 
   const displayed = typeof limit === 'number' ? shuffled.slice(0, limit) : shuffled
 

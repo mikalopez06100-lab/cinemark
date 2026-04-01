@@ -17,6 +17,8 @@
     "article:extract-lindusud": "node scripts/extract-lindusud-images.mjs",
     "article:publish-lindusud": "node scripts/publish-lindusud-article.mjs",
     "storage:upload-hero-bg": "node scripts/upload-hero-background.mjs",
+    "storage:upload-concept": "node scripts/upload-concept-image.mjs",
+    "storage:publish-concept": "node scripts/apply-supabase-sql.mjs supabase/migrations/012_storage_concept_anon_upload.sql && node scripts/upload-concept-image.mjs && node scripts/apply-supabase-sql.mjs supabase/migrations/013_storage_concept_lock.sql",
     "partners:sync-logos": "node scripts/sync-partners-logos.mjs"
   },
   "dependencies": {

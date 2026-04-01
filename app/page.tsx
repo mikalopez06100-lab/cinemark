@@ -3,12 +3,21 @@ import Link from 'next/link'
 import PartnersGrid from '@/components/PartnersGrid'
 import RevealWrapper from '@/components/RevealWrapper'
 import HomeClient from '@/components/HomeClient'
+import { getConceptImageUrl } from '@/lib/concept-image'
 import { getHeroBackgroundImageUrl } from '@/lib/hero-background'
 import { supabase } from '@/lib/supabase'
 import type { Film, BlogPost, Partner } from '@/lib/supabase'
 
+const filmStatusLabel: Record<Film['status'], string> = {
+  finalized: 'Projet finalisé',
+  postprod: 'En cours de post-production',
+  ongoing: 'Tournage en cours',
+  upcoming: 'Tournage à venir',
+  seeking_partners: 'En recherche de partenaires',
+}
+
 async function getHomeData() {
-  const [filmsRes, postsRes, partnersRes] = await Promise.all([
+  const [filmsRes, postsRes, partnersRes, filmsCountRes, partnersCountRes] = await Promise.all([
     supabase
       .from('films')
       .select('*')
@@ -21,19 +30,24 @@ async function getHomeData() {
       .select('id, name, category, logo_url, website')
       .eq('active', true)
       .order('name'),
+    supabase.from('films').select('id', { count: 'exact', head: true }),
+    supabase.from('partners').select('id', { count: 'exact', head: true }).eq('active', true),
   ])
   return {
     films: (filmsRes.data ?? []) as Film[],
     posts: (postsRes.data ?? []) as BlogPost[],
     partners: (partnersRes.data ?? []) as Pick<Partner, 'id' | 'name' | 'category' | 'logo_url' | 'website'>[],
+    filmsCount: filmsCountRes.count ?? 0,
+    partnersCount: partnersCountRes.count ?? 0,
   }
 }
 
 export const revalidate = 60
 
 export default async function HomePage() {
-  const { films, posts, partners } = getHomeDataSorted(await getHomeData())
+  const { films, posts, partners, filmsCount, partnersCount } = getHomeDataSorted(await getHomeData())
   const heroBgUrl = getHeroBackgroundImageUrl()
+  const conceptImageUrl = getConceptImageUrl()
 
   return (
     <RevealWrapper>
@@ -56,15 +70,15 @@ export default async function HomePage() {
           ))}
         </div>
         <div className="hero-content">
-          <p className="hero-label">Placement de Produits Régionaux · Côte d&apos;Azur · PACA</p>
+          <p className="hero-label">Placement de Produits Régionaux · Côte d&apos;Azur · PACA · Corse</p>
           <h1 className="hero-title">
             Vos produits<br />
             dans les <em>histoires</em><br />
             de demain.
           </h1>
           <p className="hero-sub">
-            Cinémark connecte les marques locales aux productions cinématographiques de la région Sud.
-            Films, séries, clips — votre produit devient part d&apos;une histoire.
+            Notre agence est spécialisée dans les Partenariats et le Placement de Produits Régionaux, au coeur de films,
+            de séries ou de vidéo-clips professionnels et indépendants tournés en région Sud / PACA.
           </p>
           <div className="hero-actions">
             <Link href="/#contact" className="btn-primary">Démarrer un partenariat</Link>
@@ -85,20 +99,20 @@ export default async function HomePage() {
       {/* STATS */}
       <div className="stats-bar">
         <div className="stat-item reveal">
-          <span className="stat-number">40+</span>
-          <span className="stat-label">Partenariats signés</span>
+          <span className="stat-number">{partnersCount}+</span>
+          <span className="stat-label">Partenaires</span>
         </div>
         <div className="stat-item reveal reveal-delay-1">
-          <span className="stat-number">15+</span>
-          <span className="stat-label">Productions accompagnées</span>
+          <span className="stat-number">{filmsCount}+</span>
+          <span className="stat-label">Projets accompagnés</span>
         </div>
         <div className="stat-item reveal reveal-delay-2">
           <span className="stat-number">06</span>
           <span className="stat-label">Ancrés dans les Alpes-Maritimes</span>
         </div>
         <div className="stat-item reveal reveal-delay-3">
-          <span className="stat-number">PACA</span>
-          <span className="stat-label">Zone de diffusion</span>
+          <span className="stat-number">LE SUD</span>
+          <span className="stat-label">Zone d&apos;action</span>
         </div>
       </div>
 
@@ -108,8 +122,8 @@ export default async function HomePage() {
           <div className="concept-stripe" />
           <div className="concept-visual-photo">
             <Image
-              src="/images/concept-placement-tournage.png"
-              alt="Plateau de tournage : clap, Bière du Comté et opérateur caméra — placement produit Cinémark"
+              src={conceptImageUrl}
+              alt="Bouteilles Cosy Kombucha sur plateau avec clap de cinéma — placement produit régional et cinéma Cinémark Azur"
               fill
               sizes="(max-width: 900px) 100vw, 45vw"
               className="concept-visual-img"
@@ -122,25 +136,29 @@ export default async function HomePage() {
         </div>
         <div className="reveal reveal-delay-1">
           <p className="section-label">Notre concept</p>
-          <h2 className="section-title">Le placement produit,<br /><em>réinventé</em> pour les marques locales.</h2>
+          <h2 className="section-title">Le placement de produits,<br /><em>adapté</em> pour les marques locales.</h2>
           <p className="section-text">
-            Le placement produit n&apos;est plus réservé aux multinationales. Cinémark démocratise l&apos;accès à cet outil de communication puissant pour les artisans, commerçants et marques du Sud.
+            Nous concevons des connexions naturelles et authentiques entre les créateurs de contenus et les marques,
+            les commerçants ou les artisans qui font la richesse de notre territoire méditerranéen.
           </p>
           <p className="section-text" style={{ marginTop: '1.2rem' }}>
-            Votre produit apparaît naturellement dans un film, un clip ou une série — ancré dans l&apos;imaginaire de la Côte d&apos;Azur, porté par une histoire et diffusé sur les plateformes et festivals.
+            Une boisson consommée à l&apos;image, un bijou porté, un accessoire manipulé, votre restaurant qui devient un décor
+            ou un tableau visible en arrière-plan.
+            <br />
+            Offrez à votre marque une visibilité sur grand écran !
           </p>
           <div style={{ display: 'flex', gap: '3rem', marginTop: '3rem' }}>
             <div>
-              <span style={{ display: 'block', fontFamily: 'var(--serif)', fontSize: '1.8rem', color: 'var(--gold-lt)', fontWeight: 300 }}>Organique</span>
-              <span style={{ fontSize: '0.78rem', color: 'var(--muted)', letterSpacing: '0.05em' }}>Pas intrusif, naturel</span>
+              <span style={{ display: 'block', fontFamily: 'var(--serif)', fontSize: '1.8rem', color: 'var(--gold-lt)', fontWeight: 300 }}>Soutenir</span>
+              <span style={{ fontSize: '0.78rem', color: 'var(--muted)', letterSpacing: '0.05em' }}>La création locale</span>
             </div>
             <div>
-              <span style={{ display: 'block', fontFamily: 'var(--serif)', fontSize: '1.8rem', color: 'var(--gold-lt)', fontWeight: 300 }}>Durable</span>
-              <span style={{ fontSize: '0.78rem', color: 'var(--muted)', letterSpacing: '0.05em' }}>Le film reste, votre marque aussi</span>
+              <span style={{ display: 'block', fontFamily: 'var(--serif)', fontSize: '1.8rem', color: 'var(--gold-lt)', fontWeight: 300 }}>Valorisez</span>
+              <span style={{ fontSize: '0.78rem', color: 'var(--muted)', letterSpacing: '0.05em' }}>Votre image et celle de la Région</span>
             </div>
             <div>
-              <span style={{ display: 'block', fontFamily: 'var(--serif)', fontSize: '1.8rem', color: 'var(--gold-lt)', fontWeight: 300 }}>Local</span>
-              <span style={{ fontSize: '0.78rem', color: 'var(--muted)', letterSpacing: '0.05em' }}>Ancré dans le territoire</span>
+              <span style={{ display: 'block', fontFamily: 'var(--serif)', fontSize: '1.8rem', color: 'var(--gold-lt)', fontWeight: 300 }}>Favoriser</span>
+              <span style={{ fontSize: '0.78rem', color: 'var(--muted)', letterSpacing: '0.05em' }}>Les circuits courts</span>
             </div>
           </div>
         </div>
@@ -155,29 +173,121 @@ export default async function HomePage() {
         <div className="process-grid">
           <div className="process-step reveal">
             <span className="step-num">01</span>
-            <h3 className="step-title">Sélection & Matching</h3>
-            <p className="step-text">Nous identifions les productions en cours sur le territoire et matchons les produits selon l&apos;univers du film, le public cible et la cohérence narrative.</p>
+            <h3 className="step-title">Sélection</h3>
+            <p className="step-text">Nous identifions les productions de qualité tournées dans les prochains mois sur le territoire, puis nous sélectionnons les partenaires selon l&apos;univers du film et le public ciblé.</p>
           </div>
           <div className="process-step reveal reveal-delay-1">
             <span className="step-num">02</span>
             <h3 className="step-title">Intégration sur tournage</h3>
-            <p className="step-text">Votre produit est intégré de façon organique par l&apos;équipe artistique. Visible, mais jamais forcé. L&apos;histoire reste au centre.</p>
+            <p className="step-text">Sous le contrôle bienveillant de notre équipe, votre produit sera intégré de façon harmonieuse dans le récit. Visible, mais jamais ostentatoire. L&apos;histoire reste au coeur du projet.</p>
           </div>
           <div className="process-step reveal reveal-delay-2">
             <span className="step-num">03</span>
             <h3 className="step-title">Diffusion & Visibilité</h3>
-            <p className="step-text">Le film est diffusé sur les plateformes, festivals et événements locaux. Vous recevez les extraits avec votre produit pour vos propres réseaux.</p>
+            <p className="step-text">Les films sont destinés, selon les cas, aux festivals régionaux, nationaux et internationaux, ainsi qu&apos;aux salles de cinéma, aux chaînes TV et aux plateformes en ligne.</p>
           </div>
         </div>
       </section>
 
-      {/* CLIENTS */}
-      <section id="clients">
+      {/* FILMS PREVIEW */}
+      <section id="films">
+        <div className="films-intro reveal">
+          <p className="section-label">Productions</p>
+          <h2 className="section-title">Les films <em>Cinémark</em></h2>
+          <p className="section-text">Films, séries et clips où les marques de la région prennent vie. Chaque production est une opportunité de placement unique.</p>
+          <p className="section-text" style={{ marginTop: '1rem' }}>
+            Découvrez tous les projets audiovisuels soutenus par Cinémark depuis 2025.
+          </p>
+        </div>
+
+        {films.length > 0 ? (
+          <div className="films-grid films-grid--home-list reveal">
+            {films.map((film) => (
+              <Link key={film.id} href={`/films/${film.slug}`} className="film-card film-card--row" data-status={film.status}>
+                <div className="film-card-img">
+                  {film.poster_url ? (
+                    <Image
+                      src={film.poster_url}
+                      alt={`Affiche ${film.title}`}
+                      fill
+                      sizes="(max-width: 900px) 45vw, 220px"
+                      className="film-card-img-photo"
+                    />
+                  ) : (
+                    <div className="film-card-img-icon" aria-hidden>
+                      <svg viewBox="0 0 48 48" fill="none">
+                        <rect x="6" y="10" width="36" height="28" rx="2" stroke="white" strokeWidth="1.5"/>
+                        <path d="M6 18h36" stroke="white" strokeWidth="1.5"/>
+                        <circle cx="24" cy="30" r="4" stroke="white" strokeWidth="1.5"/>
+                      </svg>
+                    </div>
+                  )}
+                </div>
+                <div className="film-card-body">
+                  <div className={`film-card-status status-${film.status}`}>
+                    <span className={`status-dot ${film.status}`} />
+                    {filmStatusLabel[film.status]}
+                  </div>
+                  <div className="film-card-title">{film.title}</div>
+                  <div className="film-card-year">
+                    {(film.production_date
+                      ? new Date(film.production_date).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
+                      : film.year) ?? '—'}
+                    {film.format ? ` · ${film.format}` : ''}
+                  </div>
+                  {film.description && <p className="film-card-desc">{film.description}</p>}
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="films-grid films-grid--home-list reveal">
+            {[
+              { title: 'Soleil d\'Azur', year: 2025, format: 'Long métrage', status: 'ongoing' as const, desc: 'Un drame familial tourné entre Nice et Menton, explorant l\'héritage et le territoire méditerranéen.' },
+              { title: 'Nice by Night', year: 2025, format: 'Court métrage', status: 'seeking_partners' as const, desc: 'Un polar nocturne niçois sélectionné pour le Festival de Cannes Courts Métrages 2025.' },
+              { title: 'Méditerranée', year: 2024, format: 'Long métrage', status: 'finalized' as const, desc: 'Un film de voyage et d\'identité tourné sur toute la côte méditerranéenne française.' },
+            ].map((film) => (
+              <div key={film.title} className="film-card film-card--row">
+                <div className="film-card-img">
+                  <div className="film-card-img-icon" aria-hidden>
+                    <svg viewBox="0 0 48 48" fill="none">
+                      <rect x="6" y="10" width="36" height="28" rx="2" stroke="white" strokeWidth="1.5"/>
+                      <path d="M6 18h36" stroke="white" strokeWidth="1.5"/>
+                      <circle cx="24" cy="30" r="4" stroke="white" strokeWidth="1.5"/>
+                    </svg>
+                  </div>
+                </div>
+                <div className="film-card-body">
+                  <div className={`film-card-status status-${film.status}`}>
+                    <span className={`status-dot ${film.status}`} />
+                    {filmStatusLabel[film.status]}
+                  </div>
+                  <div className="film-card-title">{film.title}</div>
+                  <div className="film-card-year">{film.year} · {film.format}</div>
+                  <p className="film-card-desc">{film.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div style={{ marginTop: '3rem', textAlign: 'center' }}>
+          <Link href="/films" className="btn-ghost">
+            Voir toutes les productions
+            <svg viewBox="0 0 16 16" fill="none">
+              <path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </Link>
+        </div>
+      </section>
+
+      {/* PARTENAIRES (références) */}
+      <section id="partenaires-section">
         <div className="clients-intro reveal">
           <p className="section-label">Références</p>
-          <h2 className="section-title">Ils ont fait <em>confiance</em><br />à Cinémark.</h2>
+          <h2 className="section-title">Ils font <em>confiance</em><br />à Cinémark.</h2>
           <p className="section-text" style={{ margin: '0 auto', textAlign: 'center' }}>
-            Des brasseries artisanales aux grandes institutions sportives, Cinémark accompagne des marques qui ont en commun d&apos;être ancrées dans leur territoire.
+            Boissons bio et artisanales, marques locales ou grandes institutions sportives : Cinémark-Azur accompagne les enseignes ancrées dans leur territoire.
           </p>
         </div>
         <div className="reveal">
@@ -211,135 +321,74 @@ export default async function HomePage() {
         </div>
         <div className="reveal reveal-delay-1">
           <p className="section-label">Notre territoire</p>
-          <h2 className="section-title">La région la plus<br /><em>filmée</em> de France.</h2>
+          <h2 className="section-title">La 2ème région la plus<br /><em>filmée</em> de France.</h2>
           <p className="section-text">
-            La Côte d&apos;Azur est un territoire d&apos;exception pour la production audiovisuelle. Cinémark exploite ce capital naturel pour positionner vos produits là où la lumière est la meilleure.
+            Forte de sa lumière naturelle, de ses décors variés et de sa grande histoire avec le cinéma, la région Sud est un territoire d&apos;exception pour la production audiovisuelle. Elle accueille plus de 1.000 tournages chaque année.
           </p>
           <ul className="territory-list">
-            <li>Nice · Cannes · Monaco · Menton</li>
-            <li>Grasse · Antibes · Vence · Tourettes-sur-Loup</li>
-            <li>Marseille · Aix-en-Provence · Toulon</li>
-            <li>Festivals : Cannes FF, BARCIFF Barcelona, Première Séance</li>
-            <li>Diffusion nationale & plateformes streaming</li>
+            <li>Nice · Cannes · Menton</li>
+            <li>Alpes-Maritimes · Var · Bouches-du-Rhône</li>
+            <li>Principauté de Monaco</li>
+            <li>Alpes-de-Haute-Provence · Hautes-Alpes · Vaucluse</li>
+            <li>Corse</li>
           </ul>
+        </div>
+      </section>
+
+      {/* VOTRE TOURNAGE (aperçu) */}
+      <section id="tournage" style={{ background: 'var(--black)' }}>
+        <div className="clients-intro reveal" style={{ marginBottom: 0 }}>
+          <p className="section-label">Votre tournage</p>
+          <h2 className="section-title">
+            Vous préparez un tournage<br />dans le <em>Sud</em> ?
+          </h2>
+          <p className="section-text" style={{ margin: '0 auto', textAlign: 'center' }}>
+            Nous accompagnons les productions audiovisuelles dans la recherche de partenaires et de placements de produit adaptés à votre univers cinématographique.
+          </p>
+          <p style={{ textAlign: 'center', marginTop: '2rem' }}>
+            <Link href="/marques" className="btn-primary">
+              En savoir plus sur votre tournage
+            </Link>
+          </p>
+        </div>
+      </section>
+
+      {/* VOTRE MARQUE (aperçu) */}
+      <section id="votre-marque" style={{ background: 'var(--charcoal)' }}>
+        <div className="clients-intro reveal" style={{ marginBottom: 0 }}>
+          <p className="section-label">Votre marque</p>
+          <h2 className="section-title">
+            Votre marque sur le <em>grand écran</em>
+          </h2>
+          <p className="section-text" style={{ margin: '0 auto', textAlign: 'center' }}>
+            Le Cinéma est un support de communication puissant. Démarquez-vous avec une présence naturelle dans des films, séries et clips tournés dans le Sud.
+          </p>
+          <p style={{ textAlign: 'center', marginTop: '2rem' }}>
+            <Link href="/votre-marque" className="btn-primary">
+              Candidater — votre marque
+            </Link>
+          </p>
         </div>
       </section>
 
       {/* TESTIMONIAL */}
       <section id="testimonial">
         <blockquote className="reveal">
-          Voir l&apos;un de nos tableaux dans le court-métrage, c&apos;est une mise en avant que nous n&apos;aurions jamais obtenue seuls. Merci Cinémark pour cette belle opportunité.
+          Très heureux de voir l&apos;un de nos tableaux dans le court-métrage &quot;Comme tout le monde&quot; ! Merci de cette belle mise en avant.
         </blockquote>
-        <p className="testimonial-attr reveal reveal-delay-1">WeMood Shop <span>— Nice, 2025</span></p>
+        <p className="testimonial-attr reveal reveal-delay-1">WEMOOD SHOP <span>— Nice, Octobre 2025</span></p>
+        <blockquote className="reveal reveal-delay-2" style={{ marginTop: '2.5rem' }}>
+          Un plaisir d&apos;avoir participé à cette aventure avec Cinémark-Azur !
+        </blockquote>
+        <p className="testimonial-attr reveal reveal-delay-3">AUTO-MOTO ÉCOLE DES LYCÉES <span>— Nice, Octobre 2025</span></p>
+        <blockquote className="reveal reveal-delay-4" style={{ marginTop: '2.5rem' }}>
+          Fier d&apos;avoir participé à La Samain du Cinéma Fantastique (Nice), en fournissant des produits Grav&apos;Azur pour les invités du Festival !
+          Organisation professionnelle et belle collaboration avec Cinémark-Azur.
+        </blockquote>
+        <p className="testimonial-attr reveal">GRAV&apos;AZUR <span>— Nice, Novembre 2025</span></p>
       </section>
 
-      {/* CONTACT */}
-      <section id="contact">
-        <div className="contact-info reveal">
-          <p className="section-label">Contact</p>
-          <h2 className="section-title">Parlez-nous de<br />votre <em>marque</em>.</h2>
-          <p className="section-text">
-            Chaque partenariat commence par une conversation. Dites-nous qui vous êtes et nous identifierons la production idéale pour votre produit.
-          </p>
-          <div className="contact-detail">
-            <span className="contact-detail-label">Instagram</span>
-            <span className="contact-detail-val">
-              <a href="https://instagram.com/cinemark_azur" target="_blank" rel="noopener noreferrer">@cinemark_azur</a>
-            </span>
-          </div>
-          <div className="contact-detail">
-            <span className="contact-detail-label">Localisation</span>
-            <span className="contact-detail-val">Place Masséna, Nice 06000</span>
-          </div>
-          <div className="contact-detail">
-            <span className="contact-detail-label">Zone d&apos;intervention</span>
-            <span className="contact-detail-val">Alpes-Maritimes · Var · PACA · Monaco</span>
-          </div>
-        </div>
-        <HomeClient />
-      </section>
-
-      {/* FILMS PREVIEW */}
-      <section id="films">
-        <div className="films-intro reveal">
-          <p className="section-label">Productions</p>
-          <h2 className="section-title">Les films <em>Cinémark</em></h2>
-          <p className="section-text">Films, séries et clips où les marques de la région prennent vie. Chaque production est une opportunité de placement unique.</p>
-        </div>
-
-        {films.length > 0 ? (
-          <div className="films-grid reveal">
-            {films.map((film) => (
-              <Link key={film.id} href={`/films/${film.slug}`} className="film-card" data-status={film.status}>
-                <div className="film-card-img">
-                  {film.poster_url ? (
-                    <Image
-                      src={film.poster_url}
-                      alt={`Affiche ${film.title}`}
-                      fill
-                      sizes="(max-width: 900px) 100vw, 33vw"
-                      className="film-card-img-photo"
-                    />
-                  ) : (
-                    <div className="film-card-img-icon" aria-hidden>
-                      <svg viewBox="0 0 48 48" fill="none">
-                        <rect x="6" y="10" width="36" height="28" rx="2" stroke="white" strokeWidth="1.5"/>
-                        <path d="M6 18h36" stroke="white" strokeWidth="1.5"/>
-                        <circle cx="24" cy="30" r="4" stroke="white" strokeWidth="1.5"/>
-                      </svg>
-                    </div>
-                  )}
-                </div>
-                <div className={`film-card-status status-${film.status}`}>
-                  <span className={`status-dot ${film.status}`} />
-                  {film.status === 'ongoing' && 'En cours de tournage'}
-                  {film.status === 'upcoming' && 'À venir'}
-                  {film.status === 'done' && 'Réalisé'}
-                </div>
-                <div className="film-card-title">{film.title}</div>
-                <div className="film-card-year">
-                  {(film.production_date
-                    ? new Date(film.production_date).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
-                    : film.year) ?? '—'}
-                  {film.format ? ` · ${film.format}` : ''}
-                </div>
-                {film.description && <p className="film-card-desc">{film.description}</p>}
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <div className="films-grid reveal">
-            {[
-              { title: 'Soleil d\'Azur', year: 2025, format: 'Long métrage', status: 'ongoing' as const, desc: 'Un drame familial tourné entre Nice et Menton, explorant l\'héritage et le territoire méditerranéen.' },
-              { title: 'Nice by Night', year: 2025, format: 'Court métrage', status: 'upcoming' as const, desc: 'Un polar nocturne niçois sélectionné pour le Festival de Cannes Courts Métrages 2025.' },
-              { title: 'Méditerranée', year: 2024, format: 'Long métrage', status: 'done' as const, desc: 'Un film de voyage et d\'identité tourné sur toute la côte méditerranéenne française.' },
-            ].map((film) => (
-              <div key={film.title} className="film-card">
-                <div className={`film-card-status status-${film.status}`}>
-                  <span className={`status-dot ${film.status}`} />
-                  {film.status === 'ongoing' && 'En cours de tournage'}
-                  {film.status === 'upcoming' && 'À venir'}
-                  {film.status === 'done' && 'Réalisé'}
-                </div>
-                <div className="film-card-title">{film.title}</div>
-                <div className="film-card-year">{film.year} · {film.format}</div>
-                <p className="film-card-desc">{film.desc}</p>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <div style={{ marginTop: '3rem', textAlign: 'center' }}>
-          <Link href="/films" className="btn-ghost">
-            Voir toutes les productions
-            <svg viewBox="0 0 16 16" fill="none">
-              <path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </Link>
-        </div>
-      </section>
-
-      {/* BLOG PREVIEW */}
+      {/* ACTUALITES PREVIEW */}
       <section id="blog">
         <div className="blog-intro reveal">
           <p className="section-label">Actualités</p>
@@ -394,12 +443,67 @@ export default async function HomePage() {
 
         <div style={{ marginTop: '3rem', textAlign: 'center' }}>
           <Link href="/blog" className="btn-ghost">
-            Voir tous les articles
+            Voir toutes les actualités
             <svg viewBox="0 0 16 16" fill="none">
               <path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </Link>
         </div>
+      </section>
+
+      {/* CONTACT */}
+      <section id="contact">
+        <div className="contact-info reveal">
+          <p className="section-label">Contact</p>
+          <h2 className="section-title">Vous préparez un tournage<br />dans le <em>Sud</em> ?</h2>
+          <p className="section-text">
+            <strong>Vous représentez une marque ou une production audiovisuelle ?</strong> Nous vous accompagnons de la prise de contact
+            à la mise en relation, pour construire des collaborations utiles, cohérentes et visibles sur le territoire.
+            Que vous cherchiez des partenaires pour un tournage ou une présence de marque à l&apos;écran, notre équipe vous guide à chaque étape.
+          </p>
+          <ul className="territory-list" style={{ marginTop: '1.5rem' }}>
+            <li>Un budget complémentaire</li>
+            <li>Des partenaires impliqués</li>
+            <li>Des économies réalisées (régie, craft, costumes, décors, etc.)</li>
+          </ul>
+          <div className="contact-detail">
+            <span className="contact-detail-label">Instagram</span>
+            <span className="contact-detail-val">
+              <a href="https://instagram.com/cinemark_azur" target="_blank" rel="noopener noreferrer">@cinemark_azur</a>
+            </span>
+          </div>
+          <div className="contact-detail">
+            <span className="contact-detail-label">LinkedIn</span>
+            <span className="contact-detail-val">
+              <a href="https://www.linkedin.com/in/cinemark-azur-2499963a7/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            </span>
+          </div>
+          <div className="contact-detail">
+            <span className="contact-detail-label">Localisation</span>
+            <span className="contact-detail-val">3 place Masséna, Nice 06000</span>
+          </div>
+          <div className="contact-detail">
+            <span className="contact-detail-label">Contact</span>
+            <span className="contact-detail-val">Dominic Graziani</span>
+          </div>
+          <div className="contact-detail">
+            <span className="contact-detail-label">Email</span>
+            <span className="contact-detail-val">
+              <a href="mailto:dominic@cinemark-azur.com">dominic@cinemark-azur.com</a>
+            </span>
+          </div>
+          <div className="contact-detail">
+            <span className="contact-detail-label">Portable</span>
+            <span className="contact-detail-val">
+              <a href="tel:+33611987231">06 11 987 231</a>
+            </span>
+          </div>
+          <div className="contact-detail">
+            <span className="contact-detail-label">Zone d&apos;intervention</span>
+            <span className="contact-detail-val">Alpes-Maritimes · Var · PACA · Monaco</span>
+          </div>
+        </div>
+        <HomeClient />
       </section>
     </RevealWrapper>
   )
@@ -409,6 +513,8 @@ function getHomeDataSorted(data: {
   films: Film[]
   posts: BlogPost[]
   partners: Pick<Partner, 'id' | 'name' | 'category' | 'logo_url' | 'website'>[]
+  filmsCount: number
+  partnersCount: number
 }) {
   const films = [...data.films].sort((a, b) => {
     const da = a.production_date ? new Date(a.production_date).getTime() : 0

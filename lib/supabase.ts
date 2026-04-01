@@ -39,9 +39,19 @@ export type Film = {
   format: string | null
   description: string | null
   synopsis: string | null
+  director: string | null
+  production: string | null
+  duration: string | null
+  casting: string | null
+  diffusion: string | null
+  awards: string | null
+  external_url: string | null
   poster_url: string | null
   gallery_urls: string[] | null
-  status: 'ongoing' | 'upcoming' | 'done'
+  gallery_stills_urls: string[] | null
+  gallery_bts_urls: string[] | null
+  gallery_promo_urls: string[] | null
+  status: 'finalized' | 'postprod' | 'ongoing' | 'upcoming' | 'seeking_partners'
   partner_ids: string[] | null
   created_at: string
 }

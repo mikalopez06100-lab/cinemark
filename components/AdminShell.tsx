@@ -9,7 +9,7 @@ const navItems = [
   { href: '/admin', label: 'Dashboard', icon: '◈' },
   { href: '/admin/films', label: 'Films', icon: '▶' },
   { href: '/admin/partners', label: 'Partenaires', icon: '◉' },
-  { href: '/admin/blog', label: 'Blog', icon: '◎' },
+  { href: '/admin/blog', label: 'Actualités', icon: '◎' },
   { href: '/admin/applications', label: 'Candidatures', icon: '◇' },
 ]
 

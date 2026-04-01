@@ -28,6 +28,7 @@ export default function AdminBlogClient({ posts }: { posts: BlogPost[] }) {
   const [form, setForm] = useState<FormState>(emptyForm)
   const [saving, setSaving] = useState(false)
   const [uploadingCover, setUploadingCover] = useState(false)
+  const [importingHtml, setImportingHtml] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -115,11 +116,101 @@ export default function AdminBlogClient({ posts }: { posts: BlogPost[] }) {
     setUploadingCover(false)
   }
 
+  const uploadBlobAsset = async (blob: Blob, folder: string, slugSeed: string, ext: string) => {
+    const safeSlug = slugify(slugSeed) || 'article'
+    const path = `${folder}/${Date.now()}-${safeSlug}.${ext}`
+    const { error: uploadError } = await supabase.storage
+      .from('site-assets')
+      .upload(path, blob, { upsert: true, contentType: blob.type || `image/${ext}` })
+    if (uploadError) throw new Error(uploadError.message)
+    const { data } = supabase.storage.from('site-assets').getPublicUrl(path)
+    return data.publicUrl
+  }
+
+  const uploadDataUrl = async (dataUrl: string, folder: string, slugSeed: string, fallbackExt = 'jpg') => {
+    const m = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,/)
+    const mime = m?.[1] ?? `image/${fallbackExt}`
+    const ext = mime.includes('png') ? 'png' : mime.includes('webp') ? 'webp' : 'jpg'
+    const res = await fetch(dataUrl)
+    const blob = await res.blob()
+    return uploadBlobAsset(blob, folder, slugSeed, ext)
+  }
+
+  const importFromHtmlFile = async (file: File) => {
+    try {
+      setImportingHtml(true)
+      setError('')
+      const raw = await file.text()
+
+      const titleMatch = raw.match(/<title>([\s\S]*?)<\/title>/i)
+      const rawTitle = (titleMatch?.[1] ?? file.name.replace(/\.html?$/i, '')).replace(/\s+/g, ' ').trim()
+      const title = rawTitle.replace(/\s*[|—-]\s*Cinemark Azur\s*$/i, '').trim()
+      const slug = slugify(title || 'nouvel-article')
+
+      const intro =
+        raw
+          .match(/<p class="intro">([\s\S]*?)<\/p>/i)?.[1]
+          ?.replace(/<[^>]+>/g, '')
+          .replace(/\s+/g, ' ')
+          .trim() ?? ''
+
+      const bodyMatch = raw.match(/<article class="article-body">([\s\S]*?)<\/article>/i)
+      let body = bodyMatch?.[1]?.trim() ?? ''
+
+      const figureRegex = /<figure[\s\S]*?<\/figure>/gi
+      const figures = body.match(figureRegex) ?? []
+
+      for (let i = 0; i < figures.length; i += 1) {
+        const figure = figures[i]
+        const srcMatch = figure.match(/<img[^>]+src="([^"]+)"/i)
+        const captionMatch = figure.match(/<figcaption>([\s\S]*?)<\/figcaption>/i)
+        const src = srcMatch?.[1] ?? ''
+        const caption = (captionMatch?.[1] ?? '').trim()
+        let finalSrc = src
+        if (src.startsWith('data:image/')) {
+          finalSrc = await uploadDataUrl(src, 'blog-imports', `${slug}-figure-${i + 1}`)
+        }
+        const replacement = `<figure class="blog-article-image"><img src="${finalSrc}" alt="${title || 'Article'} - image ${i + 1}" width="1200" height="800" loading="lazy" />${caption ? `<figcaption>${caption}</figcaption>` : ''}</figure>`
+        body = body.replace(figure, replacement)
+      }
+
+      const heroDataMatch = raw.match(/\.hero-bg[\s\S]*?data:image\/[a-zA-Z]+;base64,[^'")\s]+/i)
+      const heroDataUrl = heroDataMatch?.[0]?.match(/(data:image\/[a-zA-Z]+;base64,[^'")\s]+)/i)?.[1]
+
+      let coverUrl = form.cover_url
+      if (heroDataUrl) {
+        coverUrl = await uploadDataUrl(heroDataUrl, 'blog-covers', slug)
+      }
+
+      const content = `<div class="blog-article-html">
+${coverUrl ? `<figure class="blog-article-cover"><img src="${coverUrl}" alt="${title}" width="1200" height="675" loading="eager" /></figure>` : ''}
+${body}
+</div>`
+        .replace(/href="#"/g, 'href="/votre-marque"')
+        .replace(/Contacter Cinemark Azur/g, 'Candidater — marques & partenaires')
+
+      setForm((prev) => ({
+        ...prev,
+        title,
+        slug,
+        category: prev.category || 'Actualités',
+        excerpt: intro ? `${intro.slice(0, 280)}${intro.length > 280 ? '…' : ''}` : prev.excerpt,
+        cover_url: coverUrl,
+        content,
+        published: true,
+      }))
+    } catch (err: any) {
+      setError(`Import HTML impossible: ${err?.message ?? 'Erreur inconnue'}`)
+    } finally {
+      setImportingHtml(false)
+    }
+  }
+
   return (
     <>
       <div className="admin-page-header">
-        <h1 className="admin-page-title">Blog</h1>
-        <button className="btn-admin" onClick={openCreate}>+ Créer un article</button>
+        <h1 className="admin-page-title">Actualités</h1>
+        <button className="btn-admin" onClick={openCreate}>+ Créer une actualité</button>
       </div>
 
       <div className="admin-table-wrap">
@@ -168,6 +259,28 @@ export default function AdminBlogClient({ posts }: { posts: BlogPost[] }) {
             <h2 className="modal-title">{modal === 'create' ? 'Créer un article' : 'Modifier l\'article'}</h2>
 
             {error && <div className="admin-alert admin-alert-error">{error}</div>}
+            <div className="admin-form-group">
+              <label>Import rapide (HTML)</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                <label className="btn-admin-ghost" style={{ cursor: importingHtml ? 'not-allowed' : 'pointer', opacity: importingHtml ? 0.6 : 1 }}>
+                  {importingHtml ? 'Import en cours…' : 'Importer un fichier HTML'}
+                  <input
+                    type="file"
+                    accept=".html,.htm,text/html"
+                    style={{ display: 'none' }}
+                    disabled={importingHtml}
+                    onChange={(e) => {
+                      const htmlFile = e.target.files?.[0]
+                      if (htmlFile) importFromHtmlFile(htmlFile)
+                      e.currentTarget.value = ''
+                    }}
+                  />
+                </label>
+                <span style={{ color: 'var(--muted)', fontSize: '0.78rem' }}>
+                  Remplit automatiquement titre, slug, extrait, contenu et couverture.
+                </span>
+              </div>
+            </div>
 
             <div className="admin-form-group">
               <label>Titre *</label>
