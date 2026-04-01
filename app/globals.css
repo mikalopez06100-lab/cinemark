@@ -1136,6 +1136,12 @@ footer {
   gap: 1rem;
   background: transparent;
 }
+/* Une colonne : 3 cartes max (le 4e film apparaît en grille 2×2 dès ≥901px). */
+@media (max-width: 900px) {
+  .films-grid--home-list > .film-card:nth-child(4) {
+    display: none;
+  }
+}
 @media (min-width: 901px) {
   .films-grid--home-list {
     grid-template-columns: repeat(2, 1fr);

@@ -24,7 +24,7 @@ async function getHomeData() {
       .select('*')
       .order('production_date', { ascending: false, nullsFirst: false })
       .order('created_at', { ascending: false })
-      .limit(3),
+      .limit(4),
     supabase.from('blog_posts').select('*').eq('published', true).order('published_at', { ascending: false }).limit(3),
     supabase
       .from('partners')
@@ -363,7 +363,7 @@ export default async function HomePage() {
         <div className="clients-intro reveal" style={{ marginBottom: 0 }}>
           <p className="section-label">Votre marque</p>
           <h2 className="section-title">
-            Votre marque sur le <em>grand écran</em>
+            Votre marque sur <em>grand écran</em>
           </h2>
           <p className="section-text" style={{ margin: '0 auto', textAlign: 'center' }}>
             Le Cinéma est un support de communication puissant. Démarquez-vous avec une présence naturelle dans des films, séries et clips tournés dans le Sud.

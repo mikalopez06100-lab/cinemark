@@ -4,7 +4,7 @@ import MarquesClient from '@/app/marques/MarquesClient'
 export const metadata: Metadata = {
   title: 'Votre marque — Cinémark',
   description:
-    'Votre marque sur le grand écran : visibilité qualitative, partenariats locaux et accompagnement Cinémark.',
+    'Votre marque sur grand écran : visibilité qualitative, partenariats locaux et accompagnement Cinémark.',
 }
 
 export default function VotreMarquePage() {
@@ -13,7 +13,7 @@ export default function VotreMarquePage() {
       <div className="marques-intro">
         <p className="section-label">Votre marque</p>
         <h1 className="section-title">
-          Votre marque sur le <em>grand écran</em>
+          Votre marque sur <em>grand écran</em>
         </h1>
         <p className="section-text">
           Le Cinéma est un support de communication puissant, capable de créer une véritable connexion avec le public et de retenir son attention.
