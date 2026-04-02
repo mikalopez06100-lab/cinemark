@@ -11,7 +11,12 @@ export default function MarquesPage() {
     <section id="marques" style={{ paddingTop: '10rem' }}>
       <div className="marques-intro">
         <p className="section-label">Votre tournage</p>
-        <h1 className="section-title">Vous préparez un tournage<br />dans le <em>Sud</em> ?</h1>
+        <h1 className="section-title marques-hero-title">
+          <span className="marques-hero-line1">Vous préparez un tournage</span>
+          <span className="marques-hero-line2">
+            dans le <em>Sud</em> ?
+          </span>
+        </h1>
         <p className="section-text">Nous accompagnons les productions audiovisuelles dans la recherche de partenaires et de placements de produit adaptés à votre univers cinématographique.</p>
       </div>
 

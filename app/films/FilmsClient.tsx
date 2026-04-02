@@ -16,6 +16,24 @@ const statusLabel: Record<string, string> = {
   finalized: 'Projet finalisé',
 }
 
+const filterDotClass: Record<Filter, string> = {
+  all: 'filter-btn-dot--all',
+  seeking_partners: 'filter-btn-dot--seeking_partners',
+  upcoming: 'filter-btn-dot--upcoming',
+  ongoing: 'filter-btn-dot--ongoing',
+  postprod: 'filter-btn-dot--postprod',
+  finalized: 'filter-btn-dot--finalized',
+}
+
+const filterShortLabel: Record<Filter, string> = {
+  all: 'Tous',
+  seeking_partners: 'En recherche',
+  upcoming: 'À venir',
+  ongoing: 'En cours',
+  postprod: 'Post-prod',
+  finalized: 'Finalisé',
+}
+
 export default function FilmsClient({ films }: { films: Film[] }) {
   const [filter, setFilter] = useState<Filter>('all')
 
@@ -23,19 +41,18 @@ export default function FilmsClient({ films }: { films: Film[] }) {
 
   return (
     <>
-      <div className="films-filters">
+      <div className="films-filters" role="tablist" aria-label="Filtrer les productions par statut">
         {(['all', 'seeking_partners', 'upcoming', 'ongoing', 'postprod', 'finalized'] as Filter[]).map((f) => (
           <button
             key={f}
+            type="button"
+            role="tab"
+            aria-selected={filter === f}
             className={`filter-btn ${filter === f ? 'active' : ''}`}
             onClick={() => setFilter(f)}
           >
-            {f === 'all' && 'Tous'}
-            {f === 'seeking_partners' && 'En recherche'}
-            {f === 'upcoming' && 'À venir'}
-            {f === 'ongoing' && <><span className="status-dot ongoing" style={{ display: 'inline-block', marginRight: '0.4rem' }} />En cours</>}
-            {f === 'postprod' && 'Post-prod'}
-            {f === 'finalized' && 'Finalisé'}
+            <span className={`filter-btn-dot ${filterDotClass[f]}`} aria-hidden />
+            <span>{filterShortLabel[f]}</span>
           </button>
         ))}
       </div>

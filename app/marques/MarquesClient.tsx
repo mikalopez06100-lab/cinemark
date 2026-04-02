@@ -18,7 +18,7 @@ export default function MarquesClient() {
   }
 
   const handleSubmit = async () => {
-    if (!form.brand_name || !form.email) return
+    if (!form.brand_name || !form.email || !form.phone?.trim()) return
     setStatus('loading')
     const { error } = await supabase.from('applications').insert({
       brand_name: form.brand_name,
@@ -44,7 +44,7 @@ export default function MarquesClient() {
 
   return (
     <div className="marques-form-wrap">
-      <p className="form-title">Déposer une candidature</p>
+      <p className="form-title">Proposer votre Marque</p>
 
       <div className="form-row">
         <div className="form-group">
@@ -69,8 +69,8 @@ export default function MarquesClient() {
       </div>
 
       <div className="form-group">
-        <label>Téléphone</label>
-        <input name="phone" type="tel" placeholder="+33 6 00 00 00 00" value={form.phone} onChange={handleChange} />
+        <label>Téléphone *</label>
+        <input name="phone" type="tel" placeholder="+33 6 00 00 00 00" value={form.phone} onChange={handleChange} required />
       </div>
 
       <div className="form-group">

@@ -316,8 +316,8 @@ export default async function HomePage() {
       <section id="territory">
         <div className="territory-map reveal">
           <Image
-            src="/images/territoire-paca-carte.png"
-            alt="Carte de la région PACA avec villes d'intervention Cinémark"
+            src="/images/territoire-cote-dazur.png"
+            alt="Vue panoramique sur la côte et les collines méditerranéennes — territoire d&apos;intervention Cinémark"
             fill
             sizes="(max-width: 900px) 100vw, 50vw"
             className="territory-map-img"
@@ -344,8 +344,11 @@ export default async function HomePage() {
       <section id="tournage" style={{ background: 'var(--black)' }}>
         <div className="clients-intro reveal" style={{ marginBottom: 0 }}>
           <p className="section-label">Votre tournage</p>
-          <h2 className="section-title">
-            Vous préparez un tournage<br />dans le <em>Sud</em> ?
+          <h2 className="section-title marques-hero-title">
+            <span className="marques-hero-line1">Vous préparez un tournage</span>
+            <span className="marques-hero-line2">
+              dans le <em>Sud</em> ?
+            </span>
           </h2>
           <p className="section-text" style={{ margin: '0 auto', textAlign: 'center' }}>
             Nous accompagnons les productions audiovisuelles dans la recherche de partenaires et de placements de produit adaptés à votre univers cinématographique.
@@ -373,7 +376,7 @@ export default async function HomePage() {
           </p>
           <p style={{ textAlign: 'center', marginTop: '2rem' }}>
             <Link href="/votre-marque" className="btn-primary">
-              Candidater — votre marque
+              Proposer votre Marque
             </Link>
           </p>
         </div>
@@ -463,33 +466,13 @@ export default async function HomePage() {
       </section>
 
       {/* CONTACT */}
-      <section id="contact" aria-label="Contact">
+      <section id="contact" aria-labelledby="contact-heading">
         <div className="contact-info reveal">
-          <div className="contact-detail">
-            <span className="contact-detail-label">Instagram</span>
-            <span className="contact-detail-val">
-              <a href="https://instagram.com/cinemark_azur" target="_blank" rel="noopener noreferrer">@cinemark_azur</a>
-            </span>
-          </div>
-          <div className="contact-detail">
-            <span className="contact-detail-label">LinkedIn</span>
-            <span className="contact-detail-val">
-              <a href="https://www.linkedin.com/in/cinemark-azur-2499963a7/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-            </span>
-          </div>
-          <div className="contact-detail">
-            <span className="contact-detail-label">Localisation</span>
-            <span className="contact-detail-val">3 place Masséna, Nice 06000</span>
-          </div>
+          <hr className="contact-section-rule" aria-hidden />
+          <h2 id="contact-heading" className="section-title contact-section-title">Contact</h2>
           <div className="contact-detail">
             <span className="contact-detail-label">Contact</span>
             <span className="contact-detail-val">Dominic Graziani</span>
-          </div>
-          <div className="contact-detail">
-            <span className="contact-detail-label">Email</span>
-            <span className="contact-detail-val">
-              <a href="mailto:dominic@cinemark-azur.com">dominic@cinemark-azur.com</a>
-            </span>
           </div>
           <div className="contact-detail">
             <span className="contact-detail-label">Portable</span>
@@ -498,8 +481,52 @@ export default async function HomePage() {
             </span>
           </div>
           <div className="contact-detail">
+            <span className="contact-detail-label">Email</span>
+            <span className="contact-detail-val">
+              <a href="mailto:dominic@cinemark-azur.com">dominic@cinemark-azur.com</a>
+            </span>
+          </div>
+          <div className="contact-detail">
+            <span className="contact-detail-label">Localisation</span>
+            <span className="contact-detail-val">3 place Masséna, Nice 06000</span>
+          </div>
+          <div className="contact-detail contact-detail--social">
+            <span className="contact-detail-label">Instagram</span>
+            <a
+              href="https://instagram.com/cinemark_azur"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="contact-social-link"
+            >
+              <svg className="contact-social-icon" viewBox="0 0 24 24" aria-hidden>
+                <path
+                  fill="currentColor"
+                  d="M12 2c2.717 0 3.056.01 4.122.06 1.065.05 1.79.217 2.428.465.66.254 1.216.598 1.772 1.153a4.908 4.908 0 0 1 1.153 1.772c.247.637.415 1.363.465 2.428.047 1.066.06 1.405.06 4.122 0 2.717-.01 3.056-.06 4.122-.05 1.065-.218 1.79-.465 2.428a4.883 4.883 0 0 1-1.153 1.772 4.897 4.897 0 0 1-1.772 1.153c-.637.247-1.363.415-2.428.465-1.066.047-1.405.06-4.122.06-2.717 0-3.056-.01-4.122-.06-1.065-.05-1.79-.218-2.428-.465a4.89 4.89 0 0 1-1.772-1.153 4.894 4.894 0 0 1-1.153-1.772c-.248-.637-.415-1.363-.465-2.428C2.013 15.056 2 14.717 2 12c0-2.717.01-3.056.06-4.122.05-1.066.217-1.79.465-2.428a4.88 4.88 0 0 1 1.153-1.772A4.897 4.897 0 0 1 5.45 2.525c.638-.248 1.362-.415 2.428-.465C8.944 2.013 9.283 2 12 2zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm6.406-.11a1.125 1.125 0 1 0 0 2.25 1.125 1.125 0 0 0 0-2.25zM12 9a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"
+                />
+              </svg>
+              <span>@cinemark_azur</span>
+            </a>
+          </div>
+          <div className="contact-detail contact-detail--social">
+            <span className="contact-detail-label">LinkedIn</span>
+            <a
+              href="https://www.linkedin.com/in/cinemark-azur-2499963a7/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="contact-social-link"
+            >
+              <svg className="contact-social-icon" viewBox="0 0 24 24" aria-hidden>
+                <path
+                  fill="currentColor"
+                  d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+                />
+              </svg>
+              <span>LinkedIn</span>
+            </a>
+          </div>
+          <div className="contact-detail">
             <span className="contact-detail-label">Zone d&apos;intervention</span>
-            <span className="contact-detail-val">Alpes-Maritimes · Var · PACA · Monaco</span>
+            <span className="contact-detail-val">Alpes-Maritimes · Var · PACA · Monaco · Corse</span>
           </div>
         </div>
         <HomeClient />

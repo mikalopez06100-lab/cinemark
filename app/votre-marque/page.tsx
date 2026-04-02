@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import MarquesClient from '@/app/marques/MarquesClient'
 
 export const metadata: Metadata = {
@@ -23,7 +24,7 @@ export default function VotreMarquePage() {
         </p>
       </div>
 
-      <div className="marques-grid">
+      <div className="marques-grid marques-grid--votre-marque">
         <div className="marques-why">
           {[
             {
@@ -52,7 +53,19 @@ export default function VotreMarquePage() {
           ))}
         </div>
 
-        <MarquesClient />
+        <div className="marques-form-stack">
+          <div className="marques-votre-marque-visual">
+            <Image
+              src="/images/votre-marque-plateau-surf.png"
+              alt="Tournage sur une plage : équipe avec perche et groupe de surfeurs avec planches colorées — placement de marque et production Cinémark"
+              fill
+              sizes="(max-width: 900px) 100vw, 45vw"
+              className="marques-votre-marque-visual-img"
+              priority
+            />
+          </div>
+          <MarquesClient />
+        </div>
       </div>
     </section>
   )
