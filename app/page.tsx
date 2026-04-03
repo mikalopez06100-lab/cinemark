@@ -196,7 +196,6 @@ export default async function HomePage() {
         <div className="films-intro reveal">
           <p className="section-label">Productions</p>
           <h2 className="section-title">Les films <em>Cinémark</em></h2>
-          <p className="section-text">Films, séries et clips où les marques de la région prennent vie. Chaque production est une opportunité de placement unique.</p>
           <p className="section-text" style={{ marginTop: '1rem' }}>
             Découvrez tous les projets audiovisuels soutenus par Cinémark depuis 2025.
           </p>

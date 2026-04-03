@@ -29,7 +29,6 @@ export default async function FilmsPage() {
       <div className="films-intro">
         <p className="section-label">Productions</p>
         <h1 className="section-title">Les films <em>Cinémark</em></h1>
-        <p className="section-text">Films, séries et clips où les marques de la région prennent vie. Chaque production est une opportunité de placement unique.</p>
       </div>
       <FilmsClient films={films} />
     </section>

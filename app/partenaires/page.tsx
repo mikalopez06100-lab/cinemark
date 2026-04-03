@@ -27,7 +27,7 @@ export default async function PartenairesPage() {
         <div className="clients-intro reveal" style={{ marginBottom: '3rem' }}>
           <p className="section-label">Références</p>
           <h1 className="section-title">
-            Ils font <em>confiance</em>
+            Ils ont fait <em>confiance</em>
             <br />
             à Cinémark.
           </h1>
