@@ -149,7 +149,7 @@ export default async function HomePage() {
             <br />
             Offrez à votre marque une visibilité sur grand écran !
           </p>
-          <div style={{ display: 'flex', gap: '3rem', marginTop: '3rem' }}>
+          <div className="concept-pillars">
             <div>
               <span style={{ display: 'block', fontFamily: 'var(--serif)', fontSize: '1.8rem', color: 'var(--gold-lt)', fontWeight: 300 }}>Soutenir</span>
               <span style={{ fontSize: '0.78rem', color: 'var(--muted)', letterSpacing: '0.05em' }}>La création locale</span>

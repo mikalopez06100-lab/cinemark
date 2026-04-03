@@ -521,6 +521,14 @@ section { padding: 8rem 4rem; }
   color: var(--gold);
   margin-top: 1rem;
 }
+.concept-pillars {
+  display: flex;
+  gap: 3rem;
+  margin-top: 3rem;
+}
+.concept-pillars > div {
+  min-width: 0;
+}
 .concept-stripe {
   position: absolute;
   top: 0; left: 0; right: 0;
@@ -658,10 +666,10 @@ section { padding: 8rem 4rem; }
 .brand-tile {
   background: var(--charcoal);
   padding: 2.5rem 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  grid-template-rows: auto minmax(2.4em, auto) minmax(2.2em, auto);
+  align-items: start;
+  justify-items: center;
   gap: 0.75rem;
   transition: background 0.2s;
   cursor: default;
@@ -714,6 +722,9 @@ section { padding: 8rem 4rem; }
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
+  text-align: center;
+  line-height: 1.35;
+  width: 100%;
 }
 .brand-cat {
   font-size: 0.65rem;
@@ -721,6 +732,9 @@ section { padding: 8rem 4rem; }
   text-transform: uppercase;
   color: var(--gold);
   opacity: 0.7;
+  text-align: center;
+  line-height: 1.35;
+  width: 100%;
 }
 .brand-tile.featured .brand-logo-img {
   opacity: 1;
@@ -1771,6 +1785,12 @@ footer {
     font-size: 0.9rem;
   }
   .films-grid, .blog-grid, .process-grid { grid-template-columns: 1fr; }
+  .concept-pillars {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.1rem;
+    margin-top: 2rem;
+  }
   .film-card--row {
     grid-template-columns: 1fr;
     min-height: 0;
@@ -1834,6 +1854,10 @@ footer {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
+  }
+  .concept-pillars {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
   }
   .hero-content {
     padding-top: clamp(6.5rem, 18vh, 11rem);
