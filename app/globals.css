@@ -1767,6 +1767,7 @@ footer {
   aspect-ratio: 21 / 9;
   width: 100%;
   max-width: 56rem;
+  min-height: 11rem;
   margin: 2.25rem auto 0;
   background: var(--charcoal);
   border: 1px solid var(--border);
@@ -1774,8 +1775,13 @@ footer {
   overflow: hidden;
 }
 .marques-votre-marque-break-visual-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   object-position: center 40%;
+  display: block;
 }
 @media (min-width: 901px) {
   .marques-page--votre-marque .marques-why {
@@ -1910,8 +1916,13 @@ footer {
   overflow: hidden;
 }
 .marques-votre-marque-visual-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   object-position: center;
+  display: block;
 }
 .form-title {
   font-family: var(--serif);
