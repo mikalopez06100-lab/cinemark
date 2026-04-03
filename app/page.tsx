@@ -341,7 +341,7 @@ export default async function HomePage() {
               dans le <em>Sud</em> ?
             </span>
           </h2>
-          <p className="section-text" style={{ margin: '0 auto', textAlign: 'center' }}>
+          <p className="section-text">
             Nous accompagnons les productions audiovisuelles dans la recherche de partenaires et de placements de produit adaptés à votre univers cinématographique.
           </p>
           <p style={{ textAlign: 'center', marginTop: '2rem' }}>
@@ -359,10 +359,10 @@ export default async function HomePage() {
           <h2 className="section-title">
             Votre marque sur <em>grand écran</em>
           </h2>
-          <p className="section-text" style={{ margin: '0 auto', textAlign: 'center' }}>
+          <p className="section-text">
             Le Cinéma est un support de communication puissant, capable de créer une véritable connexion avec le public et de retenir son attention.
           </p>
-          <p className="section-text" style={{ margin: '1rem auto 0', textAlign: 'center' }}>
+          <p className="section-text" style={{ marginTop: '1rem' }}>
             Démarquez-vous et faites rayonner votre enseigne, grâce à une présence originale et raffinée.
           </p>
           <p style={{ textAlign: 'center', marginTop: '2rem' }}>

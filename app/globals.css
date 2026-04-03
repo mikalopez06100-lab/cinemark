@@ -1718,6 +1718,11 @@ footer {
 .marques-intro .marques-hero-title {
   text-align: center;
 }
+.marques-intro .section-text {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
 .marques-page--votre-marque .marques-grid {
   justify-items: stretch;
 }
@@ -1745,6 +1750,26 @@ footer {
 }
 #tournage .clients-intro,
 #votre-marque .clients-intro {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+#tournage .clients-intro .section-label,
+#votre-marque .clients-intro .section-label {
+  justify-content: center;
+}
+#tournage .clients-intro .section-label::before,
+#votre-marque .clients-intro .section-label::before {
+  display: none;
+}
+#tournage .clients-intro .section-title,
+#votre-marque .clients-intro .section-title {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+#tournage .clients-intro .section-text,
+#votre-marque .clients-intro .section-text {
   text-align: center;
   margin-left: auto;
   margin-right: auto;
