@@ -143,11 +143,12 @@ export default async function HomePage() {
             Nous concevons des connexions naturelles et authentiques entre les créateurs de contenus et les marques,
             les commerçants ou les artisans qui font la richesse de notre territoire méditerranéen.
           </p>
-          <p className="section-text" style={{ marginTop: '1.2rem' }}>
-            Une boisson consommée à l&apos;image, un bijou porté, un accessoire manipulé, votre restaurant qui devient un décor
-            ou un tableau visible en arrière-plan ?
-            <br />
-            <strong>Offrez à votre marque une visibilité sur grand écran !</strong>
+          <p className="section-text concept-cta-text" style={{ marginTop: '1.2rem' }}>
+            <span className="concept-cta-line">
+              Une boisson consommée à l&apos;image, un bijou porté, un accessoire manipulé, votre restaurant qui devient un décor
+              ou un tableau visible en arrière-plan ?
+            </span>
+            <strong className="concept-cta-highlight">Offrez à votre marque une visibilité sur grand écran !</strong>
           </p>
           <div className="concept-pillars">
             <div>

@@ -461,6 +461,19 @@ section { padding: 8rem 4rem; }
   max-width: 42rem;
   line-height: 1.85;
 }
+.concept-cta-text .concept-cta-line {
+  display: block;
+}
+.concept-cta-text .concept-cta-highlight {
+  display: block;
+  margin-top: 0.8rem;
+  font-family: var(--serif);
+  font-size: clamp(1.2rem, 2.2vw, 1.55rem);
+  line-height: 1.35;
+  color: var(--cream);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
 
 /* CONCEPT */
 #concept {
