@@ -11,6 +11,23 @@
   --muted:    rgba(242,236,224,0.45);
   --serif:    'Cormorant Garamond', Georgia, serif;
   --sans:     'DM Sans', sans-serif;
+  /* Hauteur réelle nav : logo jusqu’à 168px + padding — évite titres sous le header */
+  --nav-clearance: calc(env(safe-area-inset-top, 0px) + 14rem);
+}
+@media (max-width: 1100px) {
+  :root {
+    --nav-clearance: calc(env(safe-area-inset-top, 0px) + 12rem);
+  }
+}
+@media (max-width: 900px) {
+  :root {
+    --nav-clearance: calc(env(safe-area-inset-top, 0px) + 9.75rem);
+  }
+}
+@media (max-width: 640px) {
+  :root {
+    --nav-clearance: calc(env(safe-area-inset-top, 0px) + 8.75rem);
+  }
 }
 
 html {
@@ -39,6 +56,13 @@ body.nav-menu-open {
 main {
   max-width: 100%;
   overflow-x: clip;
+  position: relative;
+  z-index: 1;
+}
+
+/* Ancres : le titre de section reste sous la nav fixe sans être rogné */
+section[id]:not(#hero) {
+  scroll-margin-top: var(--nav-clearance);
 }
 
 /* Grain overlay */
@@ -430,11 +454,26 @@ nav.scrolled { border-color: var(--border); }
 section { padding: 5.5rem 4rem; }
 
 .page-section-top {
-  padding-top: clamp(6.25rem, 14vh, 9.75rem);
+  padding-top: var(--nav-clearance);
+}
+
+article.page-section-top {
+  display: block;
+  scroll-margin-top: var(--nav-clearance);
+}
+
+.blog-article-shell {
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 4rem;
+  padding-right: 4rem;
+  padding-bottom: 5rem;
 }
 @media (max-width: 900px) {
-  .page-section-top {
-    padding-top: clamp(5.5rem, 20vw, 7.25rem);
+  .blog-article-shell {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
   }
 }
 
@@ -491,7 +530,6 @@ section { padding: 5.5rem 4rem; }
   grid-template-columns: 1fr 1fr;
   gap: 4rem;
   align-items: center;
-  scroll-margin-top: 6rem;
 }
 @media (min-width: 901px) {
   .concept-visual {

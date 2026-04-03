@@ -22,7 +22,7 @@ export default async function BlogPage() {
   const posts = (data ?? []) as BlogPost[]
 
   return (
-    <section id="blog" style={{ paddingTop: '10rem' }}>
+    <section id="blog" className="page-section-top">
       <div className="blog-intro">
         <p className="section-label">Actualités</p>
         <h1 className="section-title">L&apos;univers <em>Cinémark</em></h1>
