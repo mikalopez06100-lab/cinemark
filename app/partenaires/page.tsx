@@ -27,13 +27,11 @@ export default async function PartenairesPage() {
         <div className="clients-intro reveal" style={{ marginBottom: '3rem' }}>
           <p className="section-label">Références</p>
           <h1 className="section-title">
-            Ils ont fait <em>confiance</em>
-            <br />
-            à Cinémark.
+            Ils font confiance à Cinémark.
           </h1>
           <p className="section-text" style={{ margin: '0 auto', textAlign: 'center' }}>
-            Des brasseries artisanales aux institutions sportives et territoriales : des marques ancrées dans le Sud qui
-            choisissent le cinéma pour raconter leur territoire.
+            Des marques de vêtements locales aux grandes institutions sportives, en passant par les boissons bio et artisanales,
+            Cinémark-Azur accompagne les enseignes ancrées dans leur territoire.
           </p>
         </div>
 
