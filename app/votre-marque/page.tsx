@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import MarquesClient from '@/app/marques/MarquesClient'
+import pontonImage from '../../public/images/votre-marque-ponton.png'
+import plateauSurfImage from '../../public/images/votre-marque-plateau-surf.png'
 
 export const metadata: Metadata = {
   title: 'Votre marque — Cinémark',
@@ -26,12 +28,13 @@ export default function VotreMarquePage() {
 
       <div className="marques-votre-marque-break-visual">
         <Image
-          src="/images/votre-marque-ponton.png"
+          src={pontonImage}
           alt="Deux femmes sur un ponton au bord d'un lac, paysage verdoyant — visibilité de marque et cinéma"
           fill
           sizes="(max-width: 900px) 100vw, min(960px, 90vw)"
           className="marques-votre-marque-break-visual-img"
           priority
+          placeholder="blur"
         />
       </div>
 
@@ -67,7 +70,7 @@ export default function VotreMarquePage() {
         <div className="marques-form-stack">
           <div className="marques-votre-marque-visual">
             <Image
-              src="/images/votre-marque-plateau-surf.png"
+              src={plateauSurfImage}
               alt="Tournage sur une plage : équipe avec perche et groupe de surfeurs avec planches colorées — placement de marque et production Cinémark"
               fill
               sizes="(max-width: 900px) 100vw, 45vw"

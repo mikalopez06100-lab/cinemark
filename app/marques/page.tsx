@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
+import tournageScene from '../../public/images/votre-tournage-scene.png'
 
 export const metadata: Metadata = {
   title: 'Votre tournage — Cinémark',
@@ -22,7 +23,7 @@ export default function MarquesPage() {
 
       <div className="marques-tournage-visual marques-tournage-visual--between">
         <Image
-          src="/images/votre-tournage-scene.png"
+          src={tournageScene}
           alt="Plateau de tournage de nuit, clap et équipe — Cinémark accompagne les productions"
           fill
           sizes="(max-width: 900px) 100vw, min(960px, 90vw)"

@@ -1,4 +1,3 @@
-import { supabase } from '@/lib/supabase'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
 import AdminShell from '@/components/AdminShell'
 import Link from 'next/link'
@@ -6,13 +5,13 @@ import Link from 'next/link'
 export const dynamic = 'force-dynamic'
 
 export default async function AdminDashboard() {
-  const supabaseAdmin = createSupabaseServerClient()
+  const supabase = createSupabaseServerClient()
   const [applicationsRes, filmsRes, postsRes, partnersRes, recentAppsRes] = await Promise.all([
-    supabaseAdmin.from('applications').select('id', { count: 'exact' }).eq('status', 'new'),
+    supabase.from('applications').select('id', { count: 'exact' }).eq('status', 'new'),
     supabase.from('films').select('id', { count: 'exact' }),
     supabase.from('blog_posts').select('id', { count: 'exact' }).eq('published', true),
     supabase.from('partners').select('id', { count: 'exact' }).eq('active', true),
-    supabaseAdmin.from('applications').select('*').order('created_at', { ascending: false }).limit(5),
+    supabase.from('applications').select('*').order('created_at', { ascending: false }).limit(5),
   ])
 
   const stats = [

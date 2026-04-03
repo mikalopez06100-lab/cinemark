@@ -8,6 +8,7 @@ import { getHeroBackgroundImageUrl } from '@/lib/hero-background'
 import { resolveMediaUrl } from '@/lib/media-url'
 import { supabase } from '@/lib/supabase'
 import type { Film, BlogPost, Partner } from '@/lib/supabase'
+import territoryPanorama from '../public/images/territoire-cote-dazur.png'
 
 const filmStatusLabel: Record<Film['status'], string> = {
   finalized: 'Projet finalisé',
@@ -119,6 +120,7 @@ export default async function HomePage() {
               fill
               sizes="(max-width: 900px) 100vw, 45vw"
               className="concept-visual-img"
+              placeholder={typeof conceptImageUrl === 'string' ? undefined : 'blur'}
             />
           </div>
           <p className="concept-quote">
@@ -307,11 +309,12 @@ export default async function HomePage() {
       <section id="territory">
         <div className="territory-map reveal">
           <Image
-            src="/images/territoire-cote-dazur.png"
+            src={territoryPanorama}
             alt="Vue panoramique sur la côte et les collines méditerranéennes — territoire d&apos;intervention Cinémark"
             fill
             sizes="(max-width: 900px) 100vw, 50vw"
             className="territory-map-img"
+            placeholder="blur"
             priority={false}
           />
         </div>

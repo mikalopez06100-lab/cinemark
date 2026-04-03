@@ -4,8 +4,9 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { resolveMediaUrl } from '@/lib/media-url'
 import { getSiteLogoRemoteUrl } from '@/lib/site-logo'
+import fallbackLogo from '../public/images/cinemark-logo.png'
 
-const FALLBACK_SRC = '/images/cinemark-logo.png'
+const FALLBACK_SRC = fallbackLogo.src
 
 /** Dimensions = ratio intrinsèque (~3,33:l) ; le CSS fixe la taille d’affichage réelle. */
 const SIZES = {

@@ -42,7 +42,10 @@ export default function Nav() {
 
   return (
     <>
-      <nav className={scrolled ? 'scrolled' : ''} aria-label="Navigation principale">
+      <nav
+        className={`site-header-nav${scrolled ? ' scrolled' : ''}`}
+        aria-label="Navigation principale"
+      >
         <Link href="/" className="nav-logo" onClick={closeMenu}>
           <SiteLogo variant="nav" priority />
         </Link>

@@ -58,8 +58,8 @@ export default async function FilmDetailPage({ params }: Props) {
     <section className="page-section-top">
       <div className="film-detail">
         <div className="film-detail-header">
-          <Link href="/films" className="btn-ghost film-back-link">
-            ← Retour aux films
+          <Link href="/films" className="film-back-link">
+            ← Retour à la liste des films
           </Link>
           <h1 className="section-title" style={{ marginTop: '1rem' }}>
             {film.title}
@@ -228,6 +228,12 @@ export default async function FilmDetailPage({ params }: Props) {
             ) : null}
           </>
         )}
+
+        <div className="film-detail-footer-nav">
+          <Link href="/films" className="film-back-link film-back-link--footer">
+            ← Retour à la liste des films
+          </Link>
+        </div>
       </div>
     </section>
   )

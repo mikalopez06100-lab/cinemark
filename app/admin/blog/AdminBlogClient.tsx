@@ -31,6 +31,7 @@ export default function AdminBlogClient({ posts }: { posts: BlogPost[] }) {
   const [uploadingCover, setUploadingCover] = useState(false)
   const [importingHtml, setImportingHtml] = useState(false)
   const [error, setError] = useState('')
+  const [togglingId, setTogglingId] = useState<string | null>(null)
 
   useEffect(() => {
     if (searchParams.get('new') === '1') openCreate()
@@ -78,7 +79,9 @@ export default function AdminBlogClient({ posts }: { posts: BlogPost[] }) {
       content: form.content || null,
       cover_url: form.cover_url || null,
       published: form.published,
-      published_at: form.published ? new Date().toISOString() : null,
+      published_at: form.published
+        ? (editing?.published_at ?? new Date().toISOString())
+        : (editing?.published_at ?? null),
     }
     const { error } = editing
       ? await supabase.from('blog_posts').update(payload).eq('id', editing.id)
@@ -92,6 +95,26 @@ export default function AdminBlogClient({ posts }: { posts: BlogPost[] }) {
   const handleDelete = async (id: string) => {
     if (!confirm('Supprimer cet article ?')) return
     await supabase.from('blog_posts').delete().eq('id', id)
+    router.refresh()
+  }
+
+  /** Actif = visible sur le site ; inactif = masqué mais conservé en base. */
+  const handleVisibilityChange = async (post: BlogPost, published: boolean) => {
+    if (post.published === published) return
+    setTogglingId(post.id)
+    setError('')
+    const published_at = published
+      ? (post.published_at ?? new Date().toISOString())
+      : (post.published_at ?? null)
+    const { error: upErr } = await supabase
+      .from('blog_posts')
+      .update({ published, published_at })
+      .eq('id', post.id)
+    setTogglingId(null)
+    if (upErr) {
+      setError(upErr.message)
+      return
+    }
     router.refresh()
   }
 
@@ -214,13 +237,15 @@ ${body}
         <button className="btn-admin" onClick={openCreate}>+ Créer une actualité</button>
       </div>
 
+      {error && !modal && <div className="admin-alert admin-alert-error" style={{ marginBottom: '1rem' }}>{error}</div>}
+
       <div className="admin-table-wrap">
         <table>
           <thead>
             <tr>
               <th>Titre</th>
               <th>Catégorie</th>
-              <th>Statut</th>
+              <th>Visibilité</th>
               <th>Date</th>
               <th>Actions</th>
             </tr>
@@ -233,9 +258,24 @@ ${body}
                 <td style={{ fontWeight: 400 }}>{post.title}</td>
                 <td style={{ color: 'var(--muted)' }}>{post.category ?? '—'}</td>
                 <td>
-                  <span className={`badge ${post.published ? 'badge-published' : 'badge-draft'}`}>
-                    {post.published ? 'Publié' : 'Brouillon'}
-                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <span className={`badge ${post.published ? 'badge-active' : 'badge-inactive'}`}>
+                      {post.published ? 'Actif' : 'Inactif'}
+                    </span>
+                    <select
+                      className="status-select"
+                      aria-label={`Visibilité : ${post.title}`}
+                      value={post.published ? 'active' : 'inactive'}
+                      disabled={togglingId === post.id}
+                      onChange={(e) => {
+                        const v = e.target.value as 'active' | 'inactive'
+                        void handleVisibilityChange(post, v === 'active')
+                      }}
+                    >
+                      <option value="active">Actif (visible)</option>
+                      <option value="inactive">Inactif (masqué)</option>
+                    </select>
+                  </div>
                 </td>
                 <td style={{ color: 'var(--muted)', fontSize: '0.8rem' }}>
                   {post.published_at
@@ -333,14 +373,14 @@ ${body}
               <textarea name="content" value={form.content} onChange={handleChange} placeholder="Contenu complet de l'article…" style={{ minHeight: '180px' }} />
             </div>
             <div className="admin-form-group">
-              <label>Publication</label>
+              <label>Visibilité sur le site</label>
               <div
                 className="toggle-wrap"
                 onClick={() => setForm(prev => ({ ...prev, published: !prev.published }))}
               >
                 <div className={`toggle ${form.published ? 'on' : ''}`} />
                 <span style={{ fontSize: '0.85rem', color: form.published ? 'var(--gold)' : 'var(--muted)' }}>
-                  {form.published ? 'Publié' : 'Brouillon'}
+                  {form.published ? 'Actif — visible sur le blog public' : 'Inactif — masqué, conservé en base'}
                 </span>
               </div>
             </div>
