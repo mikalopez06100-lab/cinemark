@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function VotreMarquePage() {
   return (
-    <section id="marques" style={{ paddingTop: '10rem' }}>
+    <section id="marques" className="page-section-top marques-page--votre-marque">
       <div className="marques-intro">
         <p className="section-label">Votre marque</p>
         <h1 className="section-title">

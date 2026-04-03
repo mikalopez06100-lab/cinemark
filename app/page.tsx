@@ -84,17 +84,7 @@ export default async function HomePage() {
           </p>
           <div className="hero-actions">
             <Link href="/#contact" className="btn-primary">Démarrer un partenariat</Link>
-            <Link href="/#concept" className="btn-ghost">
-              Découvrir le concept
-              <svg viewBox="0 0 16 16" fill="none">
-                <path d="M8 3v10M3 8l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </Link>
           </div>
-        </div>
-        <div className="hero-scroll">
-          <div className="scroll-line" />
-          <span>Scroll</span>
         </div>
       </section>
 
@@ -193,7 +183,7 @@ export default async function HomePage() {
       </section>
 
       {/* FILMS PREVIEW */}
-      <section id="films">
+      <section id="films" className="films-section-home">
         <div className="films-intro reveal">
           <p className="section-label">Productions</p>
           <h2 className="section-title">Les films <em>Cinémark</em></h2>
@@ -292,7 +282,8 @@ export default async function HomePage() {
           <p className="section-label">Références</p>
           <h2 className="section-title">Ils font <em>confiance</em><br />à Cinémark.</h2>
           <p className="section-text" style={{ margin: '0 auto', textAlign: 'center' }}>
-            Boissons bio et artisanales, Cinémark-Azur accompagne les enseignes ancrées dans leur territoire.
+            Des marques de vêtements locales aux grandes institutions sportives, en passant par les boissons bio et artisanales,
+            Cinémark-Azur accompagne les enseignes ancrées dans leur territoire.
           </p>
         </div>
         <div className="reveal">

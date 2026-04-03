@@ -10,7 +10,16 @@ type FormState = {
   title: string; slug: string; production_date: string; year: string; format: string;
   description: string; synopsis: string; director: string; production: string; duration: string;
   casting: string; diffusion: string; awards: string; external_url: string;
-  poster_url: string; gallery_urls: string[]; gallery_stills_urls: string[]; gallery_bts_urls: string[]; gallery_promo_urls: string[];
+  poster_url: string;
+  gallery_urls: string[];
+  gallery_stills_urls: string[];
+  gallery_bts_urls: string[];
+  gallery_promo_urls: string[];
+  gallery_captions: string[];
+  gallery_stills_captions: string[];
+  gallery_bts_captions: string[];
+  gallery_promo_captions: string[];
+  photographer_credits: string;
   status: Film['status']; partner_ids: string[]
 }
 
@@ -18,7 +27,19 @@ const emptyForm: FormState = {
   title: '', slug: '', production_date: '', year: '', format: '',
   description: '', synopsis: '', director: '', production: '', duration: '', casting: '', diffusion: '', awards: '', external_url: '',
   poster_url: '', gallery_urls: [], gallery_stills_urls: [], gallery_bts_urls: [], gallery_promo_urls: [],
+  gallery_captions: [], gallery_stills_captions: [], gallery_bts_captions: [], gallery_promo_captions: [],
+  photographer_credits: '',
   status: 'seeking_partners', partner_ids: []
+}
+
+function padCaptionsToUrls(urls: string[], captions: string[] | null | undefined): string[] {
+  return urls.map((_, i) => captions?.[i] ?? '')
+}
+
+function trimCaptionsForDb(urls: string[], caps: string[]): string[] | null {
+  if (urls.length === 0) return null
+  const trimmed = padCaptionsToUrls(urls, caps).map((c) => c.trim())
+  return trimmed.some((c) => c.length > 0) ? trimmed : null
 }
 
 function slugify(str: string) {
@@ -79,6 +100,11 @@ export default function AdminFilmsClient({
       gallery_stills_urls: film.gallery_stills_urls ?? [],
       gallery_bts_urls: film.gallery_bts_urls ?? [],
       gallery_promo_urls: film.gallery_promo_urls ?? [],
+      gallery_captions: padCaptionsToUrls(film.gallery_urls ?? [], film.gallery_captions),
+      gallery_stills_captions: padCaptionsToUrls(film.gallery_stills_urls ?? [], film.gallery_stills_captions),
+      gallery_bts_captions: padCaptionsToUrls(film.gallery_bts_urls ?? [], film.gallery_bts_captions),
+      gallery_promo_captions: padCaptionsToUrls(film.gallery_promo_urls ?? [], film.gallery_promo_captions),
+      photographer_credits: film.photographer_credits ?? '',
       status: film.status,
       partner_ids: film.partner_ids ?? [],
     })
@@ -128,6 +154,11 @@ export default function AdminFilmsClient({
       gallery_stills_urls: form.gallery_stills_urls.length > 0 ? form.gallery_stills_urls : null,
       gallery_bts_urls: form.gallery_bts_urls.length > 0 ? form.gallery_bts_urls : null,
       gallery_promo_urls: form.gallery_promo_urls.length > 0 ? form.gallery_promo_urls : null,
+      gallery_captions: trimCaptionsForDb(form.gallery_urls, form.gallery_captions),
+      gallery_stills_captions: trimCaptionsForDb(form.gallery_stills_urls, form.gallery_stills_captions),
+      gallery_bts_captions: trimCaptionsForDb(form.gallery_bts_urls, form.gallery_bts_captions),
+      gallery_promo_captions: trimCaptionsForDb(form.gallery_promo_urls, form.gallery_promo_captions),
+      photographer_credits: form.photographer_credits.trim() || null,
       status: form.status,
       partner_ids: form.partner_ids.length > 0 ? form.partner_ids : null,
     }
@@ -141,7 +172,7 @@ export default function AdminFilmsClient({
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Supprimer ce film ?')) return
+    if (!confirm('Supprimer ce projet ?')) return
     await supabase.from('films').delete().eq('id', id)
     router.refresh()
   }
@@ -159,11 +190,40 @@ export default function AdminFilmsClient({
   }
 
   const removeGalleryImage = (url: string) => {
-    setForm((prev) => ({ ...prev, gallery_urls: prev.gallery_urls.filter((u) => u !== url) }))
+    setForm((prev) => {
+      const idx = prev.gallery_urls.indexOf(url)
+      const urls = prev.gallery_urls.filter((u) => u !== url)
+      const caps = [...prev.gallery_captions]
+      if (idx >= 0) caps.splice(idx, 1)
+      return { ...prev, gallery_urls: urls, gallery_captions: padCaptionsToUrls(urls, caps) }
+    })
   }
 
-  const removeCategorizedGalleryImage = (key: 'gallery_stills_urls' | 'gallery_bts_urls' | 'gallery_promo_urls', url: string) => {
-    setForm((prev) => ({ ...prev, [key]: prev[key].filter((u) => u !== url) }))
+  const removeCategorizedGalleryImage = (
+    urlKey: 'gallery_stills_urls' | 'gallery_bts_urls' | 'gallery_promo_urls',
+    capKey: 'gallery_stills_captions' | 'gallery_bts_captions' | 'gallery_promo_captions',
+    url: string
+  ) => {
+    setForm((prev) => {
+      const idx = prev[urlKey].indexOf(url)
+      const urls = prev[urlKey].filter((u) => u !== url)
+      const caps = [...prev[capKey]]
+      if (idx >= 0) caps.splice(idx, 1)
+      return { ...prev, [urlKey]: urls, [capKey]: padCaptionsToUrls(urls, caps) }
+    })
+  }
+
+  const setGalleryCaption = (
+    capKey: 'gallery_captions' | 'gallery_stills_captions' | 'gallery_bts_captions' | 'gallery_promo_captions',
+    index: number,
+    value: string
+  ) => {
+    setForm((prev) => {
+      const next = [...prev[capKey]]
+      while (next.length <= index) next.push('')
+      next[index] = value
+      return { ...prev, [capKey]: next }
+    })
   }
 
   const statusBadge = (s: string) => {
@@ -187,8 +247,8 @@ export default function AdminFilmsClient({
   return (
     <>
       <div className="admin-page-header">
-        <h1 className="admin-page-title">Films</h1>
-        <button className="btn-admin" onClick={openCreate}>+ Créer un film</button>
+        <h1 className="admin-page-title">Projets</h1>
+        <button className="btn-admin" onClick={openCreate}>+ Créer un projet</button>
       </div>
 
       <div className="admin-table-wrap">
@@ -205,7 +265,7 @@ export default function AdminFilmsClient({
           </thead>
           <tbody>
             {films.length === 0 ? (
-              <tr><td colSpan={6} style={{ color: 'var(--muted)', textAlign: 'center', padding: '2rem' }}>Aucun film</td></tr>
+              <tr><td colSpan={6} style={{ color: 'var(--muted)', textAlign: 'center', padding: '2rem' }}>Aucun projet</td></tr>
             ) : films.map((film) => (
               <tr key={film.id}>
                 <td style={{ fontWeight: 400 }}>{film.title}</td>
@@ -232,7 +292,7 @@ export default function AdminFilmsClient({
       {modal && (
         <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setModal(null)}>
           <div className="modal">
-            <h2 className="modal-title">{modal === 'create' ? 'Créer un film' : 'Modifier le film'}</h2>
+            <h2 className="modal-title">{modal === 'create' ? 'Créer un projet' : 'Modifier le projet'}</h2>
 
             {error && <div className="admin-alert admin-alert-error">{error}</div>}
 
@@ -359,7 +419,11 @@ export default function AdminFilmsClient({
                         setUploadingGallery(true)
                         setError('')
                         const urls = await Promise.all(files.map((f) => uploadFilmAsset(f, 'film-gallery')))
-                        setForm((prev) => ({ ...prev, gallery_urls: [...prev.gallery_urls, ...urls] }))
+                        setForm((prev) => {
+                          const nextUrls = [...prev.gallery_urls, ...urls]
+                          const nextCaps = [...padCaptionsToUrls(prev.gallery_urls, prev.gallery_captions), ...urls.map(() => '')]
+                          return { ...prev, gallery_urls: nextUrls, gallery_captions: nextCaps }
+                        })
                       } catch (err: any) {
                         setError(`Upload galerie impossible: ${err.message ?? 'Erreur inconnue'}`)
                       } finally {
@@ -370,18 +434,36 @@ export default function AdminFilmsClient({
                 </label>
               </div>
               {form.gallery_urls.length > 0 ? (
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
-                  {form.gallery_urls.map((url) => (
-                    <div key={url} style={{ position: 'relative' }}>
-                      <img src={resolveMediaUrl(url) ?? url} alt="Image de tournage" style={{ width: '88px', height: '66px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--border)' }} />
-                      <button
-                        type="button"
-                        onClick={() => removeGalleryImage(url)}
-                        className="btn-admin-ghost btn-admin-danger"
-                        style={{ position: 'absolute', top: '-8px', right: '-8px', padding: '0.15rem 0.35rem', fontSize: '0.65rem' }}
-                      >
-                        ×
-                      </button>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.85rem', alignItems: 'flex-start' }}>
+                  {form.gallery_urls.map((url, i) => (
+                    <div key={url} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.35rem', width: '132px' }}>
+                      <div style={{ position: 'relative', width: '100%' }}>
+                        <img src={resolveMediaUrl(url) ?? url} alt="" style={{ width: '100%', height: '72px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--border)' }} />
+                        <button
+                          type="button"
+                          onClick={() => removeGalleryImage(url)}
+                          className="btn-admin-ghost btn-admin-danger"
+                          style={{ position: 'absolute', top: '-8px', right: '-8px', padding: '0.15rem 0.35rem', fontSize: '0.65rem' }}
+                        >
+                          ×
+                        </button>
+                      </div>
+                      <input
+                        type="text"
+                        value={form.gallery_captions[i] ?? ''}
+                        onChange={(e) => setGalleryCaption('gallery_captions', i, e.target.value)}
+                        placeholder="Légende"
+                        style={{
+                          width: '100%',
+                          fontSize: '0.7rem',
+                          textAlign: 'center',
+                          padding: '0.35rem 0.25rem',
+                          borderRadius: '4px',
+                          border: '1px solid var(--border)',
+                          background: 'var(--surface)',
+                          color: 'var(--cream)',
+                        }}
+                      />
                     </div>
                   ))}
                 </div>
@@ -407,7 +489,11 @@ export default function AdminFilmsClient({
                         setUploadingGallery(true)
                         setError('')
                         const urls = await Promise.all(files.map((f) => uploadFilmAsset(f, 'film-gallery')))
-                        setForm((prev) => ({ ...prev, gallery_stills_urls: [...prev.gallery_stills_urls, ...urls] }))
+                        setForm((prev) => {
+                          const nextUrls = [...prev.gallery_stills_urls, ...urls]
+                          const nextCaps = [...padCaptionsToUrls(prev.gallery_stills_urls, prev.gallery_stills_captions), ...urls.map(() => '')]
+                          return { ...prev, gallery_stills_urls: nextUrls, gallery_stills_captions: nextCaps }
+                        })
                       } catch (err: any) {
                         setError(`Upload impossible: ${err.message ?? 'Erreur inconnue'}`)
                       } finally {
@@ -418,11 +504,104 @@ export default function AdminFilmsClient({
                 </label>
               </div>
               {form.gallery_stills_urls.length > 0 ? (
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
-                  {form.gallery_stills_urls.map((url) => (
-                    <div key={url} style={{ position: 'relative' }}>
-                      <img src={resolveMediaUrl(url) ?? url} alt="Image tirée du film" style={{ width: '88px', height: '66px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--border)' }} />
-                      <button type="button" onClick={() => removeCategorizedGalleryImage('gallery_stills_urls', url)} className="btn-admin-ghost btn-admin-danger" style={{ position: 'absolute', top: '-8px', right: '-8px', padding: '0.15rem 0.35rem', fontSize: '0.65rem' }}>×</button>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.85rem', alignItems: 'flex-start' }}>
+                  {form.gallery_stills_urls.map((url, i) => (
+                    <div key={url} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.35rem', width: '132px' }}>
+                      <div style={{ position: 'relative', width: '100%' }}>
+                        <img src={resolveMediaUrl(url) ?? url} alt="" style={{ width: '100%', height: '72px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--border)' }} />
+                        <button
+                          type="button"
+                          onClick={() => removeCategorizedGalleryImage('gallery_stills_urls', 'gallery_stills_captions', url)}
+                          className="btn-admin-ghost btn-admin-danger"
+                          style={{ position: 'absolute', top: '-8px', right: '-8px', padding: '0.15rem 0.35rem', fontSize: '0.65rem' }}
+                        >
+                          ×
+                        </button>
+                      </div>
+                      <input
+                        type="text"
+                        value={form.gallery_stills_captions[i] ?? ''}
+                        onChange={(e) => setGalleryCaption('gallery_stills_captions', i, e.target.value)}
+                        placeholder="Légende"
+                        style={{
+                          width: '100%',
+                          fontSize: '0.7rem',
+                          textAlign: 'center',
+                          padding: '0.35rem 0.25rem',
+                          borderRadius: '4px',
+                          border: '1px solid var(--border)',
+                          background: 'var(--surface)',
+                          color: 'var(--cream)',
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : <p style={{ color: 'var(--muted)', fontSize: '0.78rem' }}>Aucune image ajoutée.</p>}
+            </div>
+            <div className="admin-form-group">
+              <label>Photos de tournage (BTS)</label>
+              <div style={{ marginBottom: '0.6rem' }}>
+                <label className="btn-admin-ghost" style={{ cursor: uploadingGallery ? 'not-allowed' : 'pointer', opacity: uploadingGallery ? 0.6 : 1 }}>
+                  {uploadingGallery ? 'Upload…' : 'Ajouter des images'}
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    multiple
+                    style={{ display: 'none' }}
+                    disabled={uploadingGallery}
+                    onChange={async (e) => {
+                      const files = Array.from(e.target.files ?? [])
+                      if (files.length === 0) return
+                      try {
+                        setUploadingGallery(true)
+                        setError('')
+                        const urls = await Promise.all(files.map((f) => uploadFilmAsset(f, 'film-gallery')))
+                        setForm((prev) => {
+                          const nextUrls = [...prev.gallery_bts_urls, ...urls]
+                          const nextCaps = [...padCaptionsToUrls(prev.gallery_bts_urls, prev.gallery_bts_captions), ...urls.map(() => '')]
+                          return { ...prev, gallery_bts_urls: nextUrls, gallery_bts_captions: nextCaps }
+                        })
+                      } catch (err: any) {
+                        setError(`Upload impossible: ${err.message ?? 'Erreur inconnue'}`)
+                      } finally {
+                        setUploadingGallery(false)
+                      }
+                    }}
+                  />
+                </label>
+              </div>
+              {form.gallery_bts_urls.length > 0 ? (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.85rem', alignItems: 'flex-start' }}>
+                  {form.gallery_bts_urls.map((url, i) => (
+                    <div key={url} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.35rem', width: '132px' }}>
+                      <div style={{ position: 'relative', width: '100%' }}>
+                        <img src={resolveMediaUrl(url) ?? url} alt="" style={{ width: '100%', height: '72px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--border)' }} />
+                        <button
+                          type="button"
+                          onClick={() => removeCategorizedGalleryImage('gallery_bts_urls', 'gallery_bts_captions', url)}
+                          className="btn-admin-ghost btn-admin-danger"
+                          style={{ position: 'absolute', top: '-8px', right: '-8px', padding: '0.15rem 0.35rem', fontSize: '0.65rem' }}
+                        >
+                          ×
+                        </button>
+                      </div>
+                      <input
+                        type="text"
+                        value={form.gallery_bts_captions[i] ?? ''}
+                        onChange={(e) => setGalleryCaption('gallery_bts_captions', i, e.target.value)}
+                        placeholder="Légende"
+                        style={{
+                          width: '100%',
+                          fontSize: '0.7rem',
+                          textAlign: 'center',
+                          padding: '0.35rem 0.25rem',
+                          borderRadius: '4px',
+                          border: '1px solid var(--border)',
+                          background: 'var(--surface)',
+                          color: 'var(--cream)',
+                        }}
+                      />
                     </div>
                   ))}
                 </div>
@@ -446,7 +625,11 @@ export default function AdminFilmsClient({
                         setUploadingGallery(true)
                         setError('')
                         const urls = await Promise.all(files.map((f) => uploadFilmAsset(f, 'film-gallery')))
-                        setForm((prev) => ({ ...prev, gallery_promo_urls: [...prev.gallery_promo_urls, ...urls] }))
+                        setForm((prev) => {
+                          const nextUrls = [...prev.gallery_promo_urls, ...urls]
+                          const nextCaps = [...padCaptionsToUrls(prev.gallery_promo_urls, prev.gallery_promo_captions), ...urls.map(() => '')]
+                          return { ...prev, gallery_promo_urls: nextUrls, gallery_promo_captions: nextCaps }
+                        })
                       } catch (err: any) {
                         setError(`Upload impossible: ${err.message ?? 'Erreur inconnue'}`)
                       } finally {
@@ -457,15 +640,54 @@ export default function AdminFilmsClient({
                 </label>
               </div>
               {form.gallery_promo_urls.length > 0 ? (
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
-                  {form.gallery_promo_urls.map((url) => (
-                    <div key={url} style={{ position: 'relative' }}>
-                      <img src={resolveMediaUrl(url) ?? url} alt="Photo promotionnelle" style={{ width: '88px', height: '66px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--border)' }} />
-                      <button type="button" onClick={() => removeCategorizedGalleryImage('gallery_promo_urls', url)} className="btn-admin-ghost btn-admin-danger" style={{ position: 'absolute', top: '-8px', right: '-8px', padding: '0.15rem 0.35rem', fontSize: '0.65rem' }}>×</button>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.85rem', alignItems: 'flex-start' }}>
+                  {form.gallery_promo_urls.map((url, i) => (
+                    <div key={url} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.35rem', width: '132px' }}>
+                      <div style={{ position: 'relative', width: '100%' }}>
+                        <img src={resolveMediaUrl(url) ?? url} alt="" style={{ width: '100%', height: '72px', objectFit: 'cover', borderRadius: '4px', border: '1px solid var(--border)' }} />
+                        <button
+                          type="button"
+                          onClick={() => removeCategorizedGalleryImage('gallery_promo_urls', 'gallery_promo_captions', url)}
+                          className="btn-admin-ghost btn-admin-danger"
+                          style={{ position: 'absolute', top: '-8px', right: '-8px', padding: '0.15rem 0.35rem', fontSize: '0.65rem' }}
+                        >
+                          ×
+                        </button>
+                      </div>
+                      <input
+                        type="text"
+                        value={form.gallery_promo_captions[i] ?? ''}
+                        onChange={(e) => setGalleryCaption('gallery_promo_captions', i, e.target.value)}
+                        placeholder="Légende"
+                        style={{
+                          width: '100%',
+                          fontSize: '0.7rem',
+                          textAlign: 'center',
+                          padding: '0.35rem 0.25rem',
+                          borderRadius: '4px',
+                          border: '1px solid var(--border)',
+                          background: 'var(--surface)',
+                          color: 'var(--cream)',
+                        }}
+                      />
                     </div>
                   ))}
                 </div>
               ) : <p style={{ color: 'var(--muted)', fontSize: '0.78rem' }}>Aucune image ajoutée.</p>}
+            </div>
+
+            <div className="admin-form-group">
+              <label>Crédits photographes</label>
+              <textarea
+                name="photographer_credits"
+                value={form.photographer_credits}
+                onChange={handleChange}
+                placeholder="Ex. Photos plateau : Jane Doe · Still : John Smith"
+                style={{ minHeight: '72px' }}
+              />
+              <p style={{ color: 'var(--muted)', fontSize: '0.72rem', marginTop: '0.35rem' }}>
+                Affiché sous les galeries sur la page publique du projet (centré).
+              </p>
             </div>
 
             {sortedPartners.length > 0 && (

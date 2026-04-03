@@ -51,6 +51,11 @@ export type Film = {
   gallery_stills_urls: string[] | null
   gallery_bts_urls: string[] | null
   gallery_promo_urls: string[] | null
+  gallery_captions: string[] | null
+  gallery_stills_captions: string[] | null
+  gallery_bts_captions: string[] | null
+  gallery_promo_captions: string[] | null
+  photographer_credits: string | null
   status: 'finalized' | 'postprod' | 'ongoing' | 'upcoming' | 'seeking_partners'
   partner_ids: string[] | null
   created_at: string

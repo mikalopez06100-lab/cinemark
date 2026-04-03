@@ -7,7 +7,7 @@ import SiteLogo from '@/components/SiteLogo'
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: '◈' },
-  { href: '/admin/films', label: 'Films', icon: '▶' },
+  { href: '/admin/films', label: 'Projets', icon: '▶' },
   { href: '/admin/partners', label: 'Partenaires', icon: '◉' },
   { href: '/admin/blog', label: 'Actualités', icon: '◎' },
   { href: '/admin/applications', label: 'Candidatures', icon: '◇' },

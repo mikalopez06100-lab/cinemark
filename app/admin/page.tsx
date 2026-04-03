@@ -15,7 +15,7 @@ export default async function AdminDashboard() {
 
   const stats = [
     { label: 'Candidatures nouvelles', value: applicationsRes.count ?? 0 },
-    { label: 'Films total', value: filmsRes.count ?? 0 },
+    { label: 'Projets total', value: filmsRes.count ?? 0 },
     { label: 'Articles publiés', value: postsRes.count ?? 0 },
     { label: 'Partenaires actifs', value: partnersRes.count ?? 0 },
   ]
@@ -53,7 +53,7 @@ export default async function AdminDashboard() {
           <span className="admin-table-title">Actions rapides</span>
         </div>
         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', padding: '1rem 0.25rem 0.25rem' }}>
-          <Link href="/admin/films?new=1" className="btn-admin">+ Nouveau film</Link>
+          <Link href="/admin/films?new=1" className="btn-admin">+ Nouveau projet</Link>
           <Link href="/admin/partners?new=1" className="btn-admin">+ Nouveau partenaire</Link>
           <Link href="/admin/blog?new=1" className="btn-admin">+ Nouvelle actualité</Link>
         </div>

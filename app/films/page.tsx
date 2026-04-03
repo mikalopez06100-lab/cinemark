@@ -25,7 +25,7 @@ export default async function FilmsPage() {
   })
 
   return (
-    <section id="films" style={{ paddingTop: '10rem' }}>
+    <section id="films" className="page-section-top">
       <div className="films-intro">
         <p className="section-label">Productions</p>
         <h1 className="section-title">Les films <em>Cinémark</em></h1>

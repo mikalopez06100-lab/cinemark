@@ -50,9 +50,12 @@ export default async function FilmDetailPage({ params }: Props) {
   const bts = resolveMediaUrls(film.gallery_bts_urls)
   const promo = resolveMediaUrls(film.gallery_promo_urls)
   const posterSrc = resolveMediaUrl(film.poster_url)
+  const credits = film.photographer_credits?.trim() ?? ''
+
+  const cap = (arr: string[] | null | undefined, i: number) => arr?.[i]?.trim() || null
 
   return (
-    <section style={{ paddingTop: '10rem' }}>
+    <section className="page-section-top">
       <div className="film-detail">
         <div className="film-detail-header">
           <Link href="/films" className="btn-ghost film-back-link">
@@ -157,43 +160,72 @@ export default async function FilmDetailPage({ params }: Props) {
             {stills.length > 0 && <p className="section-label" style={{ marginTop: '3.5rem' }}>Images tirées du film</p>}
             {stills.length > 0 && (
               <div className="film-gallery">
-                {stills.map((url, i) => (
-                  <div key={`${url}-${i}`} className="film-gallery-item">
-                    <Image src={url} alt={`Image tirée du film ${i + 1} — ${film.title}`} fill sizes="(max-width: 900px) 100vw, 33vw" className="film-gallery-img" />
-                  </div>
-                ))}
+                {stills.map((url, i) => {
+                  const c = cap(film.gallery_stills_captions, i)
+                  return (
+                    <figure key={`${url}-${i}`} className="film-gallery-item">
+                      <div className="film-gallery-img-wrap">
+                        <Image src={url} alt={c ?? `Image tirée du film ${i + 1} — ${film.title}`} fill sizes="(max-width: 900px) 100vw, 33vw" className="film-gallery-img" />
+                      </div>
+                      {c ? <figcaption className="film-gallery-caption">{c}</figcaption> : null}
+                    </figure>
+                  )
+                })}
               </div>
             )}
             {bts.length > 0 && <p className="section-label" style={{ marginTop: '3.5rem' }}>Photos de tournage</p>}
             {bts.length > 0 && (
               <div className="film-gallery">
-                {bts.map((url, i) => (
-                  <div key={`${url}-${i}`} className="film-gallery-item">
-                    <Image src={url} alt={`Photo de tournage ${i + 1} — ${film.title}`} fill sizes="(max-width: 900px) 100vw, 33vw" className="film-gallery-img" />
-                  </div>
-                ))}
+                {bts.map((url, i) => {
+                  const c = cap(film.gallery_bts_captions, i)
+                  return (
+                    <figure key={`${url}-${i}`} className="film-gallery-item">
+                      <div className="film-gallery-img-wrap">
+                        <Image src={url} alt={c ?? `Photo de tournage ${i + 1} — ${film.title}`} fill sizes="(max-width: 900px) 100vw, 33vw" className="film-gallery-img" />
+                      </div>
+                      {c ? <figcaption className="film-gallery-caption">{c}</figcaption> : null}
+                    </figure>
+                  )
+                })}
               </div>
             )}
             {promo.length > 0 && <p className="section-label" style={{ marginTop: '3.5rem' }}>Photos promotionnelles</p>}
             {promo.length > 0 && (
               <div className="film-gallery">
-                {promo.map((url, i) => (
-                  <div key={`${url}-${i}`} className="film-gallery-item">
-                    <Image src={url} alt={`Photo promotionnelle ${i + 1} — ${film.title}`} fill sizes="(max-width: 900px) 100vw, 33vw" className="film-gallery-img" />
-                  </div>
-                ))}
+                {promo.map((url, i) => {
+                  const c = cap(film.gallery_promo_captions, i)
+                  return (
+                    <figure key={`${url}-${i}`} className="film-gallery-item">
+                      <div className="film-gallery-img-wrap">
+                        <Image src={url} alt={c ?? `Photo promotionnelle ${i + 1} — ${film.title}`} fill sizes="(max-width: 900px) 100vw, 33vw" className="film-gallery-img" />
+                      </div>
+                      {c ? <figcaption className="film-gallery-caption">{c}</figcaption> : null}
+                    </figure>
+                  )
+                })}
               </div>
             )}
             {gallery.length > 0 && <p className="section-label" style={{ marginTop: '3.5rem' }}>Galerie</p>}
             {gallery.length > 0 && (
               <div className="film-gallery">
-                {gallery.map((url, i) => (
-                  <div key={`${url}-${i}`} className="film-gallery-item">
-                    <Image src={url} alt={`Image ${i + 1} — ${film.title}`} fill sizes="(max-width: 900px) 100vw, 33vw" className="film-gallery-img" />
-                  </div>
-                ))}
+                {gallery.map((url, i) => {
+                  const c = cap(film.gallery_captions, i)
+                  return (
+                    <figure key={`${url}-${i}`} className="film-gallery-item">
+                      <div className="film-gallery-img-wrap">
+                        <Image src={url} alt={c ?? `Image ${i + 1} — ${film.title}`} fill sizes="(max-width: 900px) 100vw, 33vw" className="film-gallery-img" />
+                      </div>
+                      {c ? <figcaption className="film-gallery-caption">{c}</figcaption> : null}
+                    </figure>
+                  )
+                })}
               </div>
             )}
+            {credits ? (
+              <p className="film-gallery-credits">
+                <strong>Crédits photographes :</strong> {credits}
+              </p>
+            ) : null}
           </>
         )}
       </div>

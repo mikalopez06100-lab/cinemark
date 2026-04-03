@@ -23,7 +23,7 @@ export default async function PartenairesPage() {
 
   return (
     <RevealWrapper>
-      <section id="partenaires" style={{ paddingTop: '7rem', paddingBottom: '6rem' }}>
+      <section id="partenaires" className="page-section-top" style={{ paddingBottom: '5rem' }}>
         <div className="clients-intro reveal" style={{ marginBottom: '3rem' }}>
           <p className="section-label">Références</p>
           <h1 className="section-title">

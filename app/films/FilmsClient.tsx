@@ -60,7 +60,7 @@ export default function FilmsClient({ films }: { films: Film[] }) {
       {visible.length === 0 ? (
         <p style={{ color: 'var(--muted)', padding: '3rem 0' }}>Aucune production dans cette catégorie.</p>
       ) : (
-        <div className="films-grid films-grid--list">
+        <div className="films-grid films-grid--home-list">
           {visible.map((film) => {
             const posterSrc = resolveMediaUrl(film.poster_url)
             return (

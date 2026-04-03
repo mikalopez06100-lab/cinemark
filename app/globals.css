@@ -404,7 +404,7 @@ nav.scrolled { border-color: var(--border); }
   grid-template-columns: repeat(4, 1fr);
 }
 .stat-item {
-  padding: 2.5rem 3rem;
+  padding: 2rem 2rem;
   border-right: 1px solid var(--border);
   text-align: center;
 }
@@ -426,8 +426,17 @@ nav.scrolled { border-color: var(--border); }
   display: block;
 }
 
-/* SECTIONS */
-section { padding: 8rem 4rem; }
+/* SECTIONS — espacement vertical un peu resserré (retour client) */
+section { padding: 5.5rem 4rem; }
+
+.page-section-top {
+  padding-top: clamp(6.25rem, 14vh, 9.75rem);
+}
+@media (max-width: 900px) {
+  .page-section-top {
+    padding-top: clamp(5.5rem, 20vw, 7.25rem);
+  }
+}
 
 .section-label {
   font-size: 0.7rem;
@@ -480,8 +489,14 @@ section { padding: 8rem 4rem; }
   background: var(--charcoal);
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6rem;
+  gap: 4rem;
   align-items: center;
+  scroll-margin-top: 6rem;
+}
+@media (min-width: 901px) {
+  .concept-visual {
+    margin-top: 0.75rem;
+  }
 }
 .concept-visual {
   position: relative;
@@ -556,7 +571,7 @@ section { padding: 8rem 4rem; }
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2px;
-  margin-top: 5rem;
+  margin-top: 3.5rem;
   border: 1px solid var(--border);
 }
 .process-step {
@@ -664,6 +679,19 @@ section { padding: 8rem 4rem; }
   box-sizing: border-box;
 }
 #partenaires-section .section-text {
+  margin-left: auto;
+  margin-right: auto;
+}
+#partenaires .clients-intro {
+  max-width: min(44rem, 100%);
+  padding-left: 0;
+  padding-right: 0;
+  width: 100%;
+  box-sizing: border-box;
+  margin-left: auto;
+  margin-right: auto;
+}
+#partenaires .section-text {
   margin-left: auto;
   margin-right: auto;
 }
@@ -810,7 +838,7 @@ section { padding: 8rem 4rem; }
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
   text-align: center;
-  padding: 7rem 4rem;
+  padding: 5rem 4rem;
 }
 blockquote {
   font-family: var(--serif);
@@ -994,7 +1022,7 @@ blockquote::before {
 footer {
   background: var(--black);
   border-top: 1px solid var(--border);
-  padding: 2.5rem 4rem;
+  padding: 2rem 4rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1072,7 +1100,19 @@ footer {
 
 /* FILMS */
 #films { background: var(--black); }
-.films-intro { max-width: 50rem; margin-bottom: 4rem; }
+.films-intro {
+  max-width: 50rem;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+.films-intro .section-label {
+  justify-content: center;
+}
+.films-intro .section-label::before {
+  display: none;
+}
 
 .films-filters {
   display: flex;
@@ -1252,7 +1292,7 @@ footer {
 }
 /* Une colonne : 3 cartes max (le 4e film apparaît en grille 2×2 dès ≥901px). */
 @media (max-width: 900px) {
-  .films-grid--home-list > .film-card:nth-child(4) {
+  .films-section-home .films-grid--home-list > .film-card:nth-child(4) {
     display: none;
   }
 }
@@ -1386,15 +1426,44 @@ footer {
   margin-top: 1rem;
 }
 .film-gallery-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.film-gallery-img-wrap {
   position: relative;
   width: 100%;
   aspect-ratio: 4 / 3;
   border: 1px solid var(--border);
   border-radius: 4px;
   overflow: hidden;
+  background: #101010;
 }
 .film-gallery-img {
   object-fit: cover;
+}
+.film-gallery-caption {
+  margin: 0;
+  padding: 0 0.25rem;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: var(--muted);
+  text-align: center;
+  max-width: 100%;
+}
+.film-gallery-credits {
+  margin: 2.5rem auto 0;
+  max-width: 44rem;
+  text-align: center;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.film-gallery-credits strong {
+  color: var(--gold);
+  font-weight: 500;
 }
 
 /* BLOG */
@@ -1597,9 +1666,31 @@ footer {
 /* MARQUES */
 #marques { background: var(--black); }
 .marques-intro { max-width: 50rem; margin-left: auto; margin-right: auto; text-align: center; }
+.marques-intro .section-label {
+  justify-content: center;
+}
+.marques-intro .section-label::before {
+  display: none;
+}
 .marques-intro .section-title,
 .marques-intro .marques-hero-title {
   text-align: center;
+}
+.marques-page--votre-marque .marques-grid {
+  justify-items: stretch;
+}
+@media (min-width: 901px) {
+  .marques-page--votre-marque .marques-why {
+    max-width: 38rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .marques-page--votre-marque .marques-form-stack {
+    max-width: 36rem;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+  }
 }
 .marques-hero-line1 {
   display: block;
@@ -1620,9 +1711,9 @@ footer {
 .marques-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6rem;
+  gap: 4rem;
   align-items: start;
-  margin-top: 5rem;
+  margin-top: 3.5rem;
 }
 .marques-why {
   display: flex;
