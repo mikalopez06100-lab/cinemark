@@ -147,7 +147,7 @@ export default async function HomePage() {
             Une boisson consommée à l&apos;image, un bijou porté, un accessoire manipulé, votre restaurant qui devient un décor
             ou un tableau visible en arrière-plan.
             <br />
-            Offrez à votre marque une visibilité sur grand écran !
+            Offrez à votre marque une visibilité sur grand écran ?
           </p>
           <div className="concept-pillars">
             <div>
