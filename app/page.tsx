@@ -145,9 +145,9 @@ export default async function HomePage() {
           </p>
           <p className="section-text" style={{ marginTop: '1.2rem' }}>
             Une boisson consommée à l&apos;image, un bijou porté, un accessoire manipulé, votre restaurant qui devient un décor
-            ou un tableau visible en arrière-plan.
+            ou un tableau visible en arrière-plan ?
             <br />
-            Offrez à votre marque une visibilité sur grand écran ?
+            <strong>Offrez à votre marque une visibilité sur grand écran !</strong>
           </p>
           <div className="concept-pillars">
             <div>
