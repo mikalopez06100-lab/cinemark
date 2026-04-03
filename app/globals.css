@@ -1725,6 +1725,22 @@ footer {
 }
 .marques-page--votre-marque .marques-grid {
   justify-items: stretch;
+  margin-top: 2rem;
+}
+.marques-votre-marque-break-visual {
+  position: relative;
+  aspect-ratio: 21 / 9;
+  width: 100%;
+  max-width: 56rem;
+  margin: 2.25rem auto 0;
+  background: var(--charcoal);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.marques-votre-marque-break-visual-img {
+  object-fit: cover;
+  object-position: center 40%;
 }
 @media (min-width: 901px) {
   .marques-page--votre-marque .marques-why {
@@ -1826,6 +1842,17 @@ footer {
   border: 1px solid var(--border);
   border-radius: 2px;
   overflow: hidden;
+}
+.marques-page--tournage .marques-tournage-visual--between {
+  width: 100%;
+  max-width: 56rem;
+  margin: 2.25rem auto 2.75rem;
+}
+.marques-page--tournage .marques-why--after-tournage-visual {
+  margin-top: 0;
+  max-width: 50rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 .marques-tournage-visual-img {
   object-fit: cover;

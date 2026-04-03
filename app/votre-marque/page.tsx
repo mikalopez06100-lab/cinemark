@@ -24,6 +24,17 @@ export default function VotreMarquePage() {
         </p>
       </div>
 
+      <div className="marques-votre-marque-break-visual">
+        <Image
+          src="/images/votre-marque-ponton.png"
+          alt="Deux femmes sur un ponton au bord d'un lac, paysage verdoyant — visibilité de marque et cinéma"
+          fill
+          sizes="(max-width: 900px) 100vw, min(960px, 90vw)"
+          className="marques-votre-marque-break-visual-img"
+          priority
+        />
+      </div>
+
       <div className="marques-grid marques-grid--votre-marque">
         <div className="marques-why">
           {[
@@ -61,7 +72,6 @@ export default function VotreMarquePage() {
               fill
               sizes="(max-width: 900px) 100vw, 45vw"
               className="marques-votre-marque-visual-img"
-              priority
             />
           </div>
           <MarquesClient />
