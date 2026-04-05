@@ -20,7 +20,7 @@ type FormState = {
   gallery_bts_captions: string[];
   gallery_promo_captions: string[];
   photographer_credits: string;
-  status: Film['status']; partner_ids: string[]
+  status: Film['status']; partner_ids: string[]; active: boolean
 }
 
 const emptyForm: FormState = {
@@ -29,7 +29,7 @@ const emptyForm: FormState = {
   poster_url: '', gallery_urls: [], gallery_stills_urls: [], gallery_bts_urls: [], gallery_promo_urls: [],
   gallery_captions: [], gallery_stills_captions: [], gallery_bts_captions: [], gallery_promo_captions: [],
   photographer_credits: '',
-  status: 'seeking_partners', partner_ids: []
+  status: 'seeking_partners', partner_ids: [], active: true
 }
 
 function padCaptionsToUrls(urls: string[], captions: string[] | null | undefined): string[] {
@@ -63,6 +63,7 @@ export default function AdminFilmsClient({
   const [uploadingPoster, setUploadingPoster] = useState(false)
   const [uploadingGallery, setUploadingGallery] = useState(false)
   const [error, setError] = useState('')
+  const [togglingId, setTogglingId] = useState<string | null>(null)
   const sortedPartners = useMemo(
     () => [...partners].sort((a, b) => a.name.localeCompare(b.name, 'fr', { sensitivity: 'base' })),
     [partners]
@@ -107,6 +108,7 @@ export default function AdminFilmsClient({
       photographer_credits: film.photographer_credits ?? '',
       status: film.status,
       partner_ids: film.partner_ids ?? [],
+      active: film.active ?? true,
     })
     setEditing(film)
     setModal('edit')
@@ -161,6 +163,7 @@ export default function AdminFilmsClient({
       photographer_credits: form.photographer_credits.trim() || null,
       status: form.status,
       partner_ids: form.partner_ids.length > 0 ? form.partner_ids : null,
+      active: form.active,
     }
     const { error } = editing
       ? await supabase.from('films').update(payload).eq('id', editing.id)
@@ -174,6 +177,20 @@ export default function AdminFilmsClient({
   const handleDelete = async (id: string) => {
     if (!confirm('Supprimer ce projet ?')) return
     await supabase.from('films').delete().eq('id', id)
+    router.refresh()
+  }
+
+  /** Actif = visible sur le site ; inactif = masqué mais conservé en base. */
+  const handleVisibilityChange = async (film: Film, active: boolean) => {
+    if ((film.active ?? true) === active) return
+    setTogglingId(film.id)
+    setError('')
+    const { error: upErr } = await supabase.from('films').update({ active }).eq('id', film.id)
+    setTogglingId(null)
+    if (upErr) {
+      setError(upErr.message)
+      return
+    }
     router.refresh()
   }
 
@@ -251,12 +268,15 @@ export default function AdminFilmsClient({
         <button className="btn-admin" onClick={openCreate}>+ Créer un projet</button>
       </div>
 
+      {error && !modal && <div className="admin-alert admin-alert-error" style={{ marginBottom: '1rem' }}>{error}</div>}
+
       <div className="admin-table-wrap">
         <table>
           <thead>
             <tr>
               <th>Titre</th>
               <th>Statut</th>
+              <th>Visibilité</th>
               <th>Date prod.</th>
               <th>Réalisateur</th>
               <th>Format</th>
@@ -265,11 +285,31 @@ export default function AdminFilmsClient({
           </thead>
           <tbody>
             {films.length === 0 ? (
-              <tr><td colSpan={6} style={{ color: 'var(--muted)', textAlign: 'center', padding: '2rem' }}>Aucun projet</td></tr>
+              <tr><td colSpan={7} style={{ color: 'var(--muted)', textAlign: 'center', padding: '2rem' }}>Aucun projet</td></tr>
             ) : films.map((film) => (
               <tr key={film.id}>
                 <td style={{ fontWeight: 400 }}>{film.title}</td>
                 <td>{statusBadge(film.status)}</td>
+                <td>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <span className={`badge ${film.active !== false ? 'badge-active' : 'badge-inactive'}`}>
+                      {film.active !== false ? 'Actif' : 'Inactif'}
+                    </span>
+                    <select
+                      className="status-select"
+                      aria-label={`Visibilité : ${film.title}`}
+                      value={film.active !== false ? 'active' : 'inactive'}
+                      disabled={togglingId === film.id}
+                      onChange={(e) => {
+                        const v = e.target.value as 'active' | 'inactive'
+                        void handleVisibilityChange(film, v === 'active')
+                      }}
+                    >
+                      <option value="active">Actif (visible)</option>
+                      <option value="inactive">Inactif (masqué)</option>
+                    </select>
+                  </div>
+                </td>
                 <td style={{ color: 'var(--muted)' }}>
                   {film.production_date
                     ? new Date(film.production_date).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' })
@@ -318,6 +358,18 @@ export default function AdminFilmsClient({
                   <option value="upcoming">Tournage à venir</option>
                   <option value="seeking_partners">En recherche de partenaires</option>
                 </select>
+              </div>
+            </div>
+            <div className="admin-form-group">
+              <label>Visibilité sur le site</label>
+              <div
+                className="toggle-wrap"
+                onClick={() => setForm((prev) => ({ ...prev, active: !prev.active }))}
+              >
+                <div className={`toggle ${form.active ? 'on' : ''}`} />
+                <span style={{ fontSize: '0.85rem', color: form.active ? 'var(--gold)' : 'var(--muted)' }}>
+                  {form.active ? 'Actif — visible sur le site public' : 'Inactif — masqué, conservé en base'}
+                </span>
               </div>
             </div>
             <div className="admin-form-group">

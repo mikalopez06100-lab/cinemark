@@ -11,10 +11,33 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 }
 
+const siteTitle = 'Cinémark — Placement de Produits Régionaux'
+const siteDescription =
+  "Cinémark connecte les marques locales aux productions cinématographiques de la région Sud. Films, séries, clips — votre produit devient part d'une histoire."
+
 export const metadata: Metadata = {
-  title: 'Cinémark — Placement de Produits Régionaux',
-  description: "Cinémark connecte les marques locales aux productions cinématographiques de la région Sud. Films, séries, clips — votre produit devient part d'une histoire.",
+  title: siteTitle,
+  description: siteDescription,
   metadataBase: new URL('https://cinemark-azur.com'),
+  icons: {
+    icon: [{ url: '/cinemark-vignette.png', type: 'image/png' }],
+    shortcut: '/cinemark-vignette.png',
+    apple: '/cinemark-vignette.png',
+  },
+  openGraph: {
+    title: siteTitle,
+    description: siteDescription,
+    siteName: 'Cinémark',
+    locale: 'fr_FR',
+    type: 'website',
+    images: [{ url: '/cinemark-vignette.png', alt: 'Cinémark' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: siteTitle,
+    description: siteDescription,
+    images: ['/cinemark-vignette.png'],
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

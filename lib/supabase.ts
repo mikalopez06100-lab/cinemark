@@ -58,6 +58,8 @@ export type Film = {
   photographer_credits: string | null
   status: 'finalized' | 'postprod' | 'ongoing' | 'upcoming' | 'seeking_partners'
   partner_ids: string[] | null
+  /** false = masqué sur le site public, conservé en base */
+  active: boolean
   created_at: string
 }
 
